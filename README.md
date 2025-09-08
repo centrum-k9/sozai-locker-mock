@@ -1,73 +1,171 @@
-# Welcome to your Lovable project
+# SozaiLocker MVP - VTuber素材管理プラットフォーム
 
-## Project info
+VTuber・クリエイター向けの素材管理プラットフォーム「SozaiLocker」のフロントエンドMVPです。
 
-**URL**: https://lovable.dev/projects/c6f0a1a6-fd56-46e9-9bd0-0996b203e1f4
+## 🎯 プロジェクト概要
 
-## How can I edit this code?
+このMVPは**UI/UXの流れ確認とユーザーテスト**を目的としており、**モックサービス/フェイクデータ**で動作します。実際のバックエンドAPIは後工程で実装差し替えが可能な構造になっています。
 
-There are several ways of editing your application.
+## 🚀 クイックスタート
 
-**Use Lovable**
+```bash
+# 依存関係のインストール
+npm install
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c6f0a1a6-fd56-46e9-9bd0-0996b203e1f4) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 開発サーバー起動
 npm run dev
+
+# ビルド
+npm run build
 ```
 
-**Edit a file directly in GitHub**
+## 📱 主要機能
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### 認証・ユーザー管理
+- Googleログイン風のモックログイン
+- ユーザープロフィール管理
+- 透かし設定
 
-**Use GitHub Codespaces**
+### 素材管理
+- ドラッグ&ドロップアップロード（モック）
+- 素材一覧（検索・フィルタ・ソート）
+- メタデータ編集
+- ライセンス管理
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### コレクション機能
+- 素材のグループ化
+- ドラッグ&ドロップでの並び替え
 
-## What technologies are used for this project?
+### 共有機能
+- パスワード保護付き共有リンク
+- 有効期限設定
+- ダウンロード履歴（モック）
+- 透かし付きプレビュー
 
-This project is built with:
+### その他
+- レスポンシブデザイン
+- ダーク/ライトモード対応
+- アナリティクス（スタブ）
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🏗️ アーキテクチャ
 
-## How can I deploy this project?
+### 技術スタック
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI**: Tailwind CSS + shadcn/ui
+- **State**: React Query + React Context
+- **Routing**: React Router v6
 
-Simply open [Lovable](https://lovable.dev/projects/c6f0a1a6-fd56-46e9-9bd0-0996b203e1f4) and click on Share -> Publish.
+### ディレクトリ構造
+```
+src/
+├── components/          # UI コンポーネント
+│   ├── ui/             # shadcn/ui コンポーネント
+│   ├── layout/         # レイアウトコンポーネント
+│   └── modals/         # モーダルコンポーネント
+├── core/               # ドメインモデル・型定義
+├── hooks/              # カスタムフック
+├── pages/              # ページコンポーネント
+├── services/           # モックAPI層
+└── lib/                # ユーティリティ
+```
 
-## Can I connect a custom domain to my Lovable project?
+### 依存分離設計
+- `/core`: 型・ドメインロジック
+- `/services`: モックAPI層（実装差し替え対象）
+- UI層は`services`経由でのみデータアクセス
 
-Yes, you can!
+## 🔄 実装差し替えガイド
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+MVPから本番環境への移行手順：
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### 1. モックAPI の差し替え
+```bash
+# 現在のモックファイル
+src/services/mockClient.ts  →  src/services/httpClient.ts
+
+# 環境変数追加
+echo "VITE_API_BASE_URL=https://api.sozailocker.com" >> .env
+```
+
+### 2. 認証システムの実装
+```typescript
+// src/hooks/useAuth.tsx の内容を実装に差し替え
+import { useSupabaseAuth } from '@supabase/auth-helpers-react';
+// または NextAuth, Auth0 など
+```
+
+### 3. ファイルアップロード
+```typescript
+// src/services/uploadApi.ts
+// 実際のS3, Cloudinary, Supabase Storage などに差し替え
+```
+
+### 4. データベース接続
+`/services/mockClient.ts` の各API関数を実際のHTTPクライアントに置換：
+
+```typescript
+// Before (Mock)
+export const assetApi = {
+  async list() { return mockAssets; }
+};
+
+// After (Real API)
+export const assetApi = {
+  async list() { 
+    return httpClient.get('/api/assets');
+  }
+};
+```
+
+## 📋 API契約書
+
+将来の実装用OpenAPI仕様は `contracts/openapi.yaml` に定義済み。
+
+主要エンドポイント：
+- `POST /api/assets` - 素材作成
+- `GET /api/assets` - 素材一覧
+- `GET /api/assets/{id}` - 素材詳細
+- `POST /api/share` - 共有リンク作成
+- `GET /api/share/{slug}` - 共有ページ取得
+
+## 🎨 デザインシステム
+
+### カラーパレット
+- Primary: バイオレット系（262, 83%, 58%）
+- Secondary: ソフトラベンダー
+- Accent: クリエイティブピンク
+
+### コンポーネント
+- カードグラデーション
+- 透かしエフェクト
+- スムーズアニメーション
+- レスポンシブグリッド
+
+## 🧪 テスト・デバッグ
+
+### モックデータ
+VTuberユースケースを想定したサンプルデータ：
+- 立ち絵、サムネイル素材、BGM、効果音
+- 3種類のライセンス設定
+- 共有リンクのデモ
+
+### アナリティクス
+開発者コンソールでイベント確認可能：
+```javascript
+// ブラウザコンソールで確認
+localStorage.getItem('analytics-events');
+```
+
+## 🚀 本番デプロイ
+
+1. ビルド: `npm run build`
+2. 静的ファイルを任意のホスティングサービスへ
+3. 環境変数で実APIエンドポイントを設定
+
+## 📄 ライセンス
+
+MIT License
+
+---
+
+**SozaiLocker MVP** - VTuberクリエイターのための素材管理を、もっとスマートに。
