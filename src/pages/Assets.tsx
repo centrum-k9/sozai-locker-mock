@@ -156,16 +156,16 @@ const Assets = () => {
             <div className="flex flex-wrap gap-4">
               {/* Category Filter */}
               <Select
-                value={selectedCategory || ''}
+                value={selectedCategory || 'all'}
                 onValueChange={(value) => 
-                  updateSearchParams({ category: value || undefined })
+                  updateSearchParams({ category: value === 'all' ? undefined : value })
                 }
               >
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="カテゴリ" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">すべて</SelectItem>
+                  <SelectItem value="all">すべて</SelectItem>
                   {Object.keys(categoryInfo).map((category) => (
                     <SelectItem key={category} value={category}>
                       {categoryInfo[category as Category].icon} {category}
@@ -176,16 +176,16 @@ const Assets = () => {
 
               {/* License Filter */}
               <Select
-                value={selectedLicense || ''}
+                value={selectedLicense || 'all'}
                 onValueChange={(value) => 
-                  updateSearchParams({ license: value || undefined })
+                  updateSearchParams({ license: value === 'all' ? undefined : value })
                 }
               >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="ライセンス" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">すべて</SelectItem>
+                  <SelectItem value="all">すべて</SelectItem>
                   {Object.entries(licensePresetInfo).map(([key, info]) => (
                     <SelectItem key={key} value={key}>
                       {info.label}
