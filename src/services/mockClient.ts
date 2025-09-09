@@ -42,12 +42,12 @@ function applyFiltersAndSort(
   filters: FilterOptions = {}, 
   sort: SortOption = 'created-desc'
 ): Asset[] {
-  let filtered = [...items];
+  let filteredItems = [...items];
 
   // Apply filters
   if (filters.search) {
     const search = filters.search.toLowerCase();
-    filtered = filtered.filter(item => 
+    filteredItems = filteredItems.filter(item => 
       item.title.toLowerCase().includes(search) ||
       item.description?.toLowerCase().includes(search) ||
       item.tags.some(tag => tag.toLowerCase().includes(search))
@@ -55,42 +55,46 @@ function applyFiltersAndSort(
   }
 
   if (filters.category) {
-    filtered = filtered.filter(item => item.category === filters.category);
+    filteredItems = filteredItems.filter(item => item.category === filters.category);
   }
 
   if (filters.license) {
-    filtered = filtered.filter(item => item.licensePreset === filters.license);
+    filteredItems = filteredItems.filter(item => item.licensePreset === filters.license);
   }
 
   if (filters.tags && filters.tags.length > 0) {
-    filtered = filtered.filter(item => 
+    filteredItems = filteredItems.filter(item => 
       filters.tags!.some(tag => item.tags.includes(tag))
     );
+  }
+
+  if (filters.ownerId) {
+    filteredItems = filteredItems.filter(item => item.ownerId === filters.ownerId);
   }
 
   // Apply sorting
   switch (sort) {
     case 'created-desc':
-      filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      filteredItems.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       break;
     case 'created-asc':
-      filtered.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      filteredItems.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       break;
     case 'title-asc':
-      filtered.sort((a, b) => a.title.localeCompare(b.title));
+      filteredItems.sort((a, b) => a.title.localeCompare(b.title));
       break;
     case 'title-desc':
-      filtered.sort((a, b) => b.title.localeCompare(a.title));
+      filteredItems.sort((a, b) => b.title.localeCompare(a.title));
       break;
     case 'size-desc':
-      filtered.sort((a, b) => b.size - a.size);
+      filteredItems.sort((a, b) => b.size - a.size);
       break;
     case 'size-asc':
-      filtered.sort((a, b) => a.size - b.size);
+      filteredItems.sort((a, b) => a.size - b.size);
       break;
   }
 
-  return filtered;
+  return filteredItems;
 }
 
 // Helper function for pagination
@@ -121,8 +125,8 @@ export const assetApi = {
     sort: SortOption = 'created-desc'
   ): Promise<ListResponse<Asset>> {
     await delay(300);
-    const filtered = applyFiltersAndSort(assetsStore, filters, sort);
-    return paginate(filtered, page, limit);
+    const filteredAssets = applyFiltersAndSort(assetsStore, filters, sort);
+    return paginate(filteredAssets, page, limit);
   },
 
   async get(id: string): Promise<Asset | null> {
