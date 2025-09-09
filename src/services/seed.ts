@@ -1,201 +1,260 @@
-import { Asset, Collection, ShareLink, DownloadLog, User } from '@/core/types';
+import { Asset, Collection, ShareLink, User, Category, LicensePreset, FavoriteFolder, DownloadHistory, DownloadNotification } from '@/core/types';
 
-// Mock user data
+// Mock seed data for VTuber asset management
+
+export const mockAssets: Asset[] = [
+  {
+    id: '1',
+    title: 'メイン立ち絵（通常）',
+    description: 'VTuberの基本立ち絵です。配信やコラボ動画でご利用ください。',
+    tags: ['基本', '立ち絵', '通常'],
+    category: '立ち絵',
+    mime: 'image/png',
+    size: 2_450_000,
+    licensePreset: 'PERSONAL_OK_COMM_NG_CREDIT_REQ',
+    creditText: 'イラスト：@artist_name',
+    previewUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop',
+    isFavorite: true,
+    createdAt: '2024-01-15T10:00:00Z',
+    ownerId: 'user1',
+  },
+  {
+    id: '2',
+    title: 'キービジュアル（春）',
+    description: '春をテーマにしたメインビジュアルです。',
+    tags: ['春', 'メインビジュアル', 'イベント'],
+    category: 'キービジュアル',
+    mime: 'image/png',
+    size: 3_200_000,
+    licensePreset: 'COMM_OK_CREDIT_REQ',
+    creditText: 'イラスト：@artist_name',
+    previewUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=600&fit=crop',
+    isFavorite: false,
+    createdAt: '2024-01-20T14:30:00Z',
+    ownerId: 'user1',
+  },
+  {
+    id: '3',
+    title: 'リアル等身イラスト',
+    description: 'リアル等身で描かれたイラストです。',
+    tags: ['リアル等身', 'フルボディ'],
+    category: 'リアル等身',
+    mime: 'image/png',
+    size: 4_100_000,
+    licensePreset: 'COMM_OK_NO_CREDIT',
+    previewUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=800&fit=crop',
+    isFavorite: true,
+    createdAt: '2024-01-25T16:45:00Z',
+    ownerId: 'user1',
+  },
+  {
+    id: '4',
+    title: 'SDキャラクター',
+    description: 'かわいいSDスタイルのキャラクターイラストです。',
+    tags: ['SD', 'デフォルメ', 'かわいい'],
+    category: 'SDイラスト',
+    mime: 'image/png',
+    size: 1_800_000,
+    licensePreset: 'PERSONAL_OK_COMM_NG_CREDIT_REQ',
+    creditText: 'イラスト：@artist_name',
+    previewUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=300&fit=crop',
+    isFavorite: false,
+    createdAt: '2024-01-28T11:20:00Z',
+    ownerId: 'user1',
+  },
+  {
+    id: '5',
+    title: 'ファンアートイラスト',
+    description: 'ファンの方からいただいたイラストです。',
+    tags: ['ファンアート', 'コミッション'],
+    category: 'FA',
+    mime: 'image/png',
+    size: 2_900_000,
+    licensePreset: 'COMM_OK_CREDIT_REQ',
+    creditText: 'イラスト：@fan_artist',
+    previewUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=400&fit=crop',
+    isFavorite: true,
+    createdAt: '2024-02-01T09:15:00Z',
+    ownerId: 'user1',
+  },
+  // Other users' assets
+  {
+    id: '6',
+    title: '別VTuberの立ち絵',
+    description: 'コラボ用の他VTuberの立ち絵',
+    tags: ['立ち絵', 'コラボ'],
+    category: '立ち絵',
+    mime: 'image/png',
+    size: 2_300_000,
+    licensePreset: 'PERSONAL_OK_COMM_NG_CREDIT_REQ',
+    creditText: 'イラスト：@other_artist',
+    previewUrl: 'https://images.unsplash.com/photo-1619895862022-09114b41f16f?w=400&h=600&fit=crop',
+    isFavorite: false,
+    createdAt: '2024-01-10T12:00:00Z',
+    ownerId: 'user2',
+  },
+];
+
 export const mockUser: User = {
-  id: 'user-1',
-  email: 'creator@example.com',
-  name: 'VTuberクリエイター',
-  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=creator',
-  defaultLicense: 'COMM_OK_CREDIT_REQ',
-  defaultCreditText: '@VTuberクリエイター',
-  watermarkText: 'SozaiLocker Sample',
-  watermarkOpacity: 0.3,
+  id: 'user1',
+  email: 'vtuber@example.com',
+  name: 'VTuber太郎',
+  displayName: 'ばーちゃるたろう',
+  avatar: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=150&h=150&fit=crop&crop=face',
+  mainAvatar: '1', // メイン立ち絵のassetId
+  keyVisual: '2', // キービジュアルのassetId
+  socialLinks: {
+    youtube: 'https://youtube.com/@virtual_taro',
+    twitch: 'https://twitch.tv/virtual_taro',
+    twitter: 'https://twitter.com/virtual_taro',
+    tiktok: 'https://tiktok.com/@virtual_taro',
+    discord: 'https://discord.gg/virtual_taro',
+  },
+  usageRules: 'コラボ配信や切り抜き動画でのご利用はOKです！商用利用の場合は事前にご相談ください。',
+  defaultLicense: 'PERSONAL_OK_COMM_NG_CREDIT_REQ',
+  defaultCreditText: 'イラスト：@artist_name',
+  watermarkText: 'VTuber太郎',
+  watermarkOpacity: 30,
   createdAt: '2024-01-01T00:00:00Z',
 };
 
-// Mock assets with VTuber use cases
-export const mockAssets: Asset[] = [
+export const mockOtherUsers: User[] = [
   {
-    id: 'asset-1',
-    title: 'メインキャラ立ち絵 - 通常衣装',
-    description: 'VTuberメインキャラクターの基本立ち絵です。配信やサムネイルに使用可能。',
-    tags: ['立ち絵', 'メインキャラ', '通常衣装', 'PNG'],
-    category: '立ち絵',
-    mime: 'image/png',
-    size: 2048000, // 2MB
-    licensePreset: 'PERSONAL_OK_COMM_NG_CREDIT_REQ',
-    creditText: '@VTuberクリエイター',
-    previewUrl: 'https://picsum.photos/400/600?random=1',
-    createdAt: '2024-12-01T10:00:00Z',
-    ownerId: 'user-1',
-  },
-  {
-    id: 'asset-2',
-    title: 'ゲーム実況用サムネイルテンプレート',
-    description: 'ゲーム実況動画用のサムネイルテンプレート。文字入れ可能な余白付き。',
-    tags: ['サムネイル', 'ゲーム実況', 'テンプレート', 'PSD'],
-    category: 'サムネ素材',
-    mime: 'image/psd',
-    size: 15728640, // 15MB
-    licensePreset: 'COMM_OK_CREDIT_REQ',
-    creditText: 'サムネ素材 by @VTuberクリエイター',
-    previewUrl: 'https://picsum.photos/800/450?random=2',
-    createdAt: '2024-12-02T14:30:00Z',
-    ownerId: 'user-1',
-  },
-  {
-    id: 'asset-3',
-    title: 'チャンネルロゴ - メインバージョン',
-    description: 'チャンネル用のメインロゴです。透明背景PNG形式。',
-    tags: ['ロゴ', 'チャンネル', '透明背景', 'ブランディング'],
-    category: 'ロゴ',
-    mime: 'image/png',
-    size: 512000, // 512KB
-    licensePreset: 'COMM_OK_NO_CREDIT',
-    previewUrl: 'https://picsum.photos/400/400?random=3',
-    createdAt: '2024-12-03T09:15:00Z',
-    ownerId: 'user-1',
-  },
-  {
-    id: 'asset-4',
-    title: 'アンビエントBGM - 作業用',
-    description: '配信のバックグラウンドに最適な落ち着いたアンビエント音楽。',
-    tags: ['BGM', 'アンビエント', '作業用', 'ループ可能'],
-    category: 'BGM',
-    mime: 'audio/wav',
-    size: 45000000, // 45MB
-    licensePreset: 'PERSONAL_OK_COMM_NG_CREDIT_REQ',
-    creditText: 'BGM: @VTuberクリエイター',
-    previewUrl: 'https://picsum.photos/400/300?random=4',
-    createdAt: '2024-12-04T16:45:00Z',
-    ownerId: 'user-1',
-  },
-  {
-    id: 'asset-5',
-    title: '通知音効果音セット',
-    description: 'チャット通知、フォロー通知など配信で使える効果音のセット。',
-    tags: ['SE', '通知音', 'セット', 'OBS'],
-    category: 'SE',
-    mime: 'audio/wav',
-    size: 5000000, // 5MB
-    licensePreset: 'COMM_OK_CREDIT_REQ',
-    creditText: 'SE by @VTuberクリエイター',
-    previewUrl: 'https://picsum.photos/400/300?random=5',
-    createdAt: '2024-12-05T11:20:00Z',
-    ownerId: 'user-1',
-  },
-  {
-    id: 'asset-6',
-    title: 'エモート用イラスト - 喜び',
-    description: 'Twitchエモートやディスコード用の感情表現イラスト。',
-    tags: ['エモート', 'イラスト', '感情', 'Twitch'],
-    category: 'イラスト',
-    mime: 'image/png',
-    size: 256000, // 256KB
-    licensePreset: 'COMM_OK_NO_CREDIT',
-    previewUrl: 'https://picsum.photos/200/200?random=6',
-    createdAt: '2024-12-06T13:10:00Z',
-    ownerId: 'user-1',
+    id: 'user2',
+    email: 'other@example.com',
+    name: 'VTuber花子',
+    displayName: 'ばーちゃるはなこ',
+    avatar: 'https://images.unsplash.com/photo-1619895862022-09114b41f16f?w=150&h=150&fit=crop&crop=face',
+    socialLinks: {
+      youtube: 'https://youtube.com/@virtual_hanako',
+      twitter: 'https://twitter.com/virtual_hanako',
+    },
+    usageRules: '個人利用のみOKです。',
+    defaultLicense: 'PERSONAL_OK_COMM_NG_CREDIT_REQ',
+    defaultCreditText: 'イラスト：@hanako_artist',
+    watermarkText: 'VTuber花子',
+    watermarkOpacity: 25,
+    createdAt: '2024-01-01T00:00:00Z',
   },
 ];
 
-// Mock collections
 export const mockCollections: Collection[] = [
   {
-    id: 'collection-1',
-    title: 'メインキャラ素材パック',
-    description: 'メインキャラクターに関連する全ての素材をまとめたコレクション',
-    itemIds: ['asset-1', 'asset-6'],
-    createdAt: '2024-12-01T12:00:00Z',
-    ownerId: 'user-1',
+    id: '1',
+    title: '基本素材セット',
+    description: 'VTuber活動に必要な基本的な素材をまとめました',
+    itemIds: ['1', '2'],
+    createdAt: '2024-01-15T10:00:00Z',
+    ownerId: 'user1',
   },
   {
-    id: 'collection-2',
-    title: '配信用音声素材',
-    description: '配信で使用する音楽・効果音のコレクション',
-    itemIds: ['asset-4', 'asset-5'],
-    createdAt: '2024-12-04T18:00:00Z',
-    ownerId: 'user-1',
+    id: '2',
+    title: 'イベント用素材',
+    description: '特別イベント用の素材コレクション',
+    itemIds: ['3', '4'],
+    createdAt: '2024-01-25T14:30:00Z',
+    ownerId: 'user1',
   },
 ];
 
-// Mock share links
 export const mockShareLinks: ShareLink[] = [
   {
-    id: 'share-1',
-    slug: 'main-character-pack',
-    type: 'collection',
-    targetId: 'collection-1',
+    id: '1',
+    slug: 'main-avatar-share',
+    type: 'asset',
+    targetId: '1',
     canDownload: true,
     passwordEnabled: false,
-    createdAt: '2024-12-07T10:00:00Z',
-    ownerId: 'user-1',
+    createdAt: '2024-01-15T12:00:00Z',
+    ownerId: 'user1',
   },
   {
-    id: 'share-2',
-    slug: 'gaming-thumbnail',
-    type: 'asset',
-    targetId: 'asset-2',
+    id: '2',
+    slug: 'basic-set-share',
+    type: 'collection',
+    targetId: '1',
     canDownload: false,
     passwordEnabled: true,
-    password: 'preview123',
+    password: 'vtuber123',
     expiresAt: '2024-12-31T23:59:59Z',
-    createdAt: '2024-12-07T15:30:00Z',
-    ownerId: 'user-1',
+    createdAt: '2024-01-20T15:30:00Z',
+    ownerId: 'user1',
   },
 ];
 
-// Mock download logs
-export const mockDownloadLogs: DownloadLog[] = [
+export const mockFavoriteFolders: FavoriteFolder[] = [
   {
-    id: 'log-1',
-    shareLinkId: 'share-1',
-    actorLabel: 'guest-abc123',
-    ipMasked: '192.168.1.***',
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-    at: '2024-12-08T14:22:00Z',
+    id: '1',
+    name: 'メイン素材',
+    assetIds: ['1', '2'],
+    ownerId: 'user1',
+    createdAt: '2024-01-15T10:00:00Z',
   },
   {
-    id: 'log-2',
-    shareLinkId: 'share-1',
-    actorLabel: 'user@example.com',
-    ipMasked: '10.0.0.***',
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    at: '2024-12-08T16:45:00Z',
+    id: '2',
+    name: 'イベント用',
+    assetIds: ['3'],
+    ownerId: 'user1',
+    createdAt: '2024-01-20T14:30:00Z',
   },
 ];
 
-// License preset display information
-export const licensePresetInfo = {
-  'PERSONAL_OK_COMM_NG_CREDIT_REQ': {
-    label: '個人利用OK・商用NG・クレジット必須',
-    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-    description: '個人での使用は可能ですが、商用利用は禁止です。使用時はクレジット表記が必要です。',
+export const mockDownloadHistory: DownloadHistory[] = [
+  {
+    id: '1',
+    assetId: '6',
+    userId: 'user1',
+    ownerId: 'user2',
+    downloadedAt: '2024-02-01T10:30:00Z',
   },
-  'COMM_OK_CREDIT_REQ': {
-    label: '商用利用OK・クレジット必須',
-    color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-    description: '商用利用も可能です。使用時はクレジット表記が必要です。',
+];
+
+export const mockDownloadNotifications: DownloadNotification[] = [
+  {
+    id: '1',
+    assetId: '1',
+    downloaderId: 'user2',
+    downloaderName: 'VTuber花子',
+    downloadedAt: '2024-02-01T14:20:00Z',
+    read: false,
   },
-  'COMM_OK_NO_CREDIT': {
-    label: '商用利用OK・クレジット不要',
-    color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-    description: '商用利用も可能で、クレジット表記も不要です。自由にご利用ください。',
+  {
+    id: '2',
+    assetId: '2',
+    downloaderId: 'user3',
+    downloaderName: 'ゲスト_123',
+    downloadedAt: '2024-01-30T16:45:00Z',
+    read: true,
   },
-  'CUSTOM': {
-    label: 'カスタムライセンス',
-    color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
-    description: '個別に設定されたライセンス条件があります。詳細をご確認ください。',
-  },
+];
+
+export const categoryInfo: Record<Category, { icon: string; color: string }> = {
+  '立ち絵': { icon: '🧍', color: 'text-pink-600' },
+  'キービジュアル': { icon: '🎨', color: 'text-purple-600' },
+  'リアル等身': { icon: '👤', color: 'text-blue-600' },
+  'SDイラスト': { icon: '🎭', color: 'text-green-600' },
+  'FA': { icon: '💝', color: 'text-orange-600' },
 };
 
-// Category information
-export const categoryInfo = {
-  '立ち絵': { icon: '🎭', color: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300' },
-  'サムネ素材': { icon: '🖼️', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' },
-  'ロゴ': { icon: '🎨', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' },
-  'BGM': { icon: '🎵', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' },
-  'SE': { icon: '🔊', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' },
-  'イラスト': { icon: '🎨', color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300' },
-  'その他': { icon: '📁', color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300' },
+export const licensePresetInfo: Record<LicensePreset, { label: string; color: string; description: string }> = {
+  'PERSONAL_OK_COMM_NG_CREDIT_REQ': { 
+    label: '個人利用OK・商用NG・クレジット必須', 
+    color: 'text-yellow-600',
+    description: '個人での使用は可能ですが、商用利用は禁止です。使用時はクレジット表記が必要です。'
+  },
+  'COMM_OK_CREDIT_REQ': { 
+    label: '商用利用OK・クレジット必須', 
+    color: 'text-green-600',
+    description: '商用利用も可能です。使用時はクレジット表記が必要です。'
+  },
+  'COMM_OK_NO_CREDIT': { 
+    label: '商用利用OK・クレジット不要', 
+    color: 'text-blue-600',
+    description: '商用利用も可能で、クレジット表記も不要です。自由にご利用ください。'
+  },
+  'CUSTOM': { 
+    label: 'カスタム許諾', 
+    color: 'text-purple-600',
+    description: '個別に設定されたライセンス条件があります。詳細をご確認ください。'
+  },
 };

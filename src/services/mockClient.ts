@@ -7,14 +7,20 @@ import {
   ListResponse, 
   FilterOptions, 
   SortOption,
-  PaginationInfo 
+  PaginationInfo,
+  FavoriteFolder,
+  DownloadHistory,
+  DownloadNotification 
 } from '@/core/types';
 import { 
   mockAssets, 
   mockCollections, 
   mockShareLinks, 
-  mockDownloadLogs, 
-  mockUser 
+  mockUser,
+  mockOtherUsers,
+  mockFavoriteFolders,
+  mockDownloadHistory,
+  mockDownloadNotifications
 } from './seed';
 
 // Simulate network delay
@@ -24,8 +30,11 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 let assetsStore = [...mockAssets];
 let collectionsStore = [...mockCollections];
 let shareLinksStore = [...mockShareLinks];
-let downloadLogsStore = [...mockDownloadLogs];
 let userStore = { ...mockUser };
+let usersStore = [mockUser, ...mockOtherUsers];
+let favoriteFoldersStore = [...mockFavoriteFolders];
+let downloadHistoryStore = [...mockDownloadHistory];
+let downloadNotificationsStore = [...mockDownloadNotifications];
 
 // Helper function to apply filters and sorting
 function applyFiltersAndSort(
@@ -242,13 +251,11 @@ export const shareApi = {
   },
 };
 
-// Download Log API
+// Download Log API (kept for compatibility)
 export const downloadLogApi = {
   async listByShareLink(shareLinkId: string): Promise<DownloadLog[]> {
     await delay(200);
-    return downloadLogsStore
-      .filter(log => log.shareLinkId === shareLinkId)
-      .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+    return [];
   },
 
   async create(data: Omit<DownloadLog, 'id' | 'at'>): Promise<DownloadLog> {
@@ -258,15 +265,17 @@ export const downloadLogApi = {
       id: `log-${Date.now()}`,
       at: new Date().toISOString(),
     };
-    downloadLogsStore.push(newLog);
     return newLog;
   },
 };
 
 // User API
 export const userApi = {
-  async get(): Promise<User> {
+  async get(userId?: string): Promise<User> {
     await delay(200);
+    if (userId) {
+      return usersStore.find(user => user.id === userId) || userStore;
+    }
     return userStore;
   },
 
@@ -274,6 +283,100 @@ export const userApi = {
     await delay(300);
     userStore = { ...userStore, ...data };
     return userStore;
+  },
+};
+
+// Favorite Folder API
+export const favoriteFolderApi = {
+  async list(): Promise<FavoriteFolder[]> {
+    await delay(200);
+    return favoriteFoldersStore.filter(folder => folder.ownerId === userStore.id);
+  },
+
+  async create(data: Omit<FavoriteFolder, 'id' | 'createdAt' | 'ownerId'>): Promise<FavoriteFolder> {
+    await delay(300);
+    const newFolder: FavoriteFolder = {
+      ...data,
+      id: `folder-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      ownerId: userStore.id,
+    };
+    favoriteFoldersStore.push(newFolder);
+    return newFolder;
+  },
+
+  async update(id: string, data: Partial<FavoriteFolder>): Promise<FavoriteFolder | null> {
+    await delay(300);
+    const index = favoriteFoldersStore.findIndex(folder => folder.id === id);
+    if (index === -1) return null;
+    
+    favoriteFoldersStore[index] = { ...favoriteFoldersStore[index], ...data };
+    return favoriteFoldersStore[index];
+  },
+
+  async delete(id: string): Promise<boolean> {
+    await delay(300);
+    const index = favoriteFoldersStore.findIndex(folder => folder.id === id);
+    if (index === -1) return false;
+    
+    favoriteFoldersStore.splice(index, 1);
+    return true;
+  },
+};
+
+// Download History API
+export const downloadHistoryApi = {
+  async getByUser(userId: string): Promise<DownloadHistory[]> {
+    await delay(200);
+    return downloadHistoryStore
+      .filter(history => history.userId === userId)
+      .sort((a, b) => new Date(b.downloadedAt).getTime() - new Date(a.downloadedAt).getTime());
+  },
+
+  async create(data: Omit<DownloadHistory, 'id'>): Promise<DownloadHistory> {
+    await delay(300);
+    const newHistory: DownloadHistory = {
+      ...data,
+      id: `history-${Date.now()}`,
+    };
+    downloadHistoryStore.push(newHistory);
+    return newHistory;
+  },
+};
+
+// Download Notification API
+export const downloadNotificationApi = {
+  async getByUser(userId: string): Promise<DownloadNotification[]> {
+    await delay(200);
+    // Get notifications for assets owned by the user
+    const userAssets = assetsStore.filter(asset => asset.ownerId === userId);
+    const userAssetIds = userAssets.map(asset => asset.id);
+    
+    return downloadNotificationsStore
+      .filter(notification => userAssetIds.includes(notification.assetId))
+      .sort((a, b) => new Date(b.downloadedAt).getTime() - new Date(a.downloadedAt).getTime());
+  },
+
+  async markAsRead(id: string): Promise<boolean> {
+    await delay(200);
+    const notification = downloadNotificationsStore.find(n => n.id === id);
+    if (notification) {
+      notification.read = true;
+      return true;
+    }
+    return false;
+  },
+
+  async markAllAsRead(userId: string): Promise<boolean> {
+    await delay(300);
+    const userAssets = assetsStore.filter(asset => asset.ownerId === userId);
+    const userAssetIds = userAssets.map(asset => asset.id);
+    
+    downloadNotificationsStore
+      .filter(notification => userAssetIds.includes(notification.assetId))
+      .forEach(notification => notification.read = true);
+    
+    return true;
   },
 };
 

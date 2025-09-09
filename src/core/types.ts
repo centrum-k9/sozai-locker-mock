@@ -9,13 +9,14 @@ export type Asset = {
   title: string;
   description?: string;
   tags: string[];
-  category?: string;
+  category: Category;
   mime: string;
   size: number; // bytes
   licensePreset: LicensePreset;
   creditText?: string;
   previewUrl?: string;   // モックURL
   originalUrl?: string;  // 常にundefined（モック段階）
+  isFavorite?: boolean;
   createdAt: string;
   ownerId: string;
 };
@@ -55,7 +56,18 @@ export type User = {
   id: string;
   email: string;
   name: string;
+  displayName?: string; // 活動名
   avatar?: string;
+  mainAvatar?: string; // メイン立ち絵のassetId
+  keyVisual?: string; // キービジュアルのassetId
+  socialLinks?: {
+    youtube?: string;
+    twitch?: string;
+    twitter?: string;
+    tiktok?: string;
+    discord?: string;
+  };
+  usageRules?: string; // 素材利用時のルール
   defaultLicense: LicensePreset;
   defaultCreditText?: string;
   watermarkText?: string;
@@ -63,14 +75,45 @@ export type User = {
   createdAt: string;
 };
 
+export type FavoriteFolder = {
+  id: string;
+  name: string;
+  assetIds: string[];
+  ownerId: string;
+  createdAt: string;
+};
+
+export type Friend = {
+  id: string;
+  userId: string;
+  friendId: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  createdAt: string;
+};
+
+export type DownloadHistory = {
+  id: string;
+  assetId: string;
+  userId: string;
+  ownerId: string;
+  downloadedAt: string;
+};
+
+export type DownloadNotification = {
+  id: string;
+  assetId: string;
+  downloaderId: string;
+  downloaderName: string;
+  downloadedAt: string;
+  read: boolean;
+};
+
 export type Category = 
   | '立ち絵'
-  | 'サムネ素材'
-  | 'ロゴ'
-  | 'BGM'
-  | 'SE'
-  | 'イラスト'
-  | 'その他';
+  | 'キービジュアル'
+  | 'リアル等身'
+  | 'SDイラスト'
+  | 'FA';
 
 export type ViewMode = 'card' | 'table';
 
@@ -87,6 +130,7 @@ export type FilterOptions = {
   license?: LicensePreset;
   tags?: string[];
   search?: string;
+  ownerId?: string;
 };
 
 export type PaginationInfo = {
