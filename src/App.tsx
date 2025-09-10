@@ -25,6 +25,9 @@ import Notifications from '@/pages/Notifications';
 import FriendsAssets from '@/pages/FriendsAssets';
 import Collabs from '@/pages/Collabs';
 import CollabDetail from '@/pages/CollabDetail';
+import DiscordIntegration from '@/pages/DiscordIntegration';
+import OverlayGenerator from '@/pages/OverlayGenerator';
+import OverlayViewer from '@/pages/OverlayViewer';
 import NotFound from '@/pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -63,6 +66,9 @@ function App() {
                       <Route path="/friends" element={<FriendsAssets />} />
                       <Route path="/collabs" element={<Collabs />} />
                       <Route path="/collabs/:id" element={<CollabDetail />} />
+                      <Route path="/collabs/:id/overlay" element={<OverlayGenerator />} />
+                      <Route path="/integrations/discord" element={<DiscordIntegration />} />
+                      <Route path="/overlay/:configId" element={<OverlayViewer />} />
                       <Route path="/s/:slug" element={<Share />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>

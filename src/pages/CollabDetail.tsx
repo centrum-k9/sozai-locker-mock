@@ -14,7 +14,8 @@ import {
   Archive,
   User,
   Image as ImageIcon,
-  Package
+  Package,
+  Monitor
 } from 'lucide-react';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { CollabEvent, CollabMember, Friend } from '@/features/collab/types';
@@ -198,6 +199,16 @@ const CollabDetail = () => {
               >
                 <Sparkles className="mr-2 h-4 w-4" />
                 テキスト生成
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+              >
+                <Link to={`/collabs/${collab.id}/overlay`}>
+                  <Monitor className="mr-2 h-4 w-4" />
+                  オーバーレイ生成
+                </Link>
               </Button>
             </div>
           </div>
