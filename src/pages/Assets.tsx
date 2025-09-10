@@ -33,6 +33,7 @@ import { assetApi } from '@/services/mockClient';
 import { Asset, FilterOptions, SortOption, ViewMode, Category } from '@/core/types';
 import { licensePresetInfo, categoryInfo } from '@/services/seed';
 import { Pagination } from '@/components/ui/pagination';
+import { AssetCardActions } from '@/components/assets/AssetCardActions';
 import { toast } from 'sonner';
 
 const Assets = () => {
@@ -122,7 +123,7 @@ const Assets = () => {
         <div>
           <h1 className="text-3xl font-bold">素材一覧</h1>
           <p className="text-muted-foreground">
-            アップロードした素材を管理・検索できます
+            アップロードした素材を管理・検索できます ({assets.length}/5 使用中)
           </p>
         </div>
         <Button
@@ -264,17 +265,24 @@ const Assets = () => {
                   className="group block"
                   onClick={() => trackClick('asset-card-click', 'assets-grid')}
                 >
-                  <Card className="border hover:shadow-lg transition-all duration-300 group-hover:border-primary/50 overflow-hidden">
-                    <CardContent className="p-0">
+                  <Card className="relative border transition-all duration-300 group-hover:border-primary/50 overflow-hidden">
+                    <CardContent className="p-0 relative">
                       <div className="aspect-video bg-muted overflow-hidden">
                         {asset.previewUrl && (
                           <img
                             src={asset.previewUrl}
                             alt={asset.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="w-full h-full object-cover"
                           />
                         )}
                       </div>
+                      <AssetCardActions 
+                        asset={asset}
+                        onSetStanding={(id) => {/* TODO: implement */}}
+                        onSetKeyVisual={(id) => {/* TODO: implement */}}
+                        onToggleFavorite={(id) => {/* TODO: implement */}}
+                        onDelete={(id) => {/* TODO: implement */}}
+                      />
                       <div className="p-4">
                         <h3 className="font-semibold mb-2 line-clamp-1 group-hover:text-primary transition-colors">
                           {asset.title}
@@ -285,9 +293,6 @@ const Assets = () => {
                               {categoryInfo[asset.category as Category]?.icon} {asset.category}
                             </Badge>
                           )}
-                          <Badge variant="outline" className={licensePresetInfo[asset.licensePreset].color}>
-                            {licensePresetInfo[asset.licensePreset].label}
-                          </Badge>
                         </div>
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           <span>{formatFileSize(asset.size)}</span>

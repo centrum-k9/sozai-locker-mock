@@ -71,6 +71,8 @@ const Settings = () => {
         </CardContent>
       </Card>
 
+      {/* License Settings - Hidden per requirements */}
+      {false && (
       <Card>
         <CardHeader>
           <CardTitle>既定のライセンス設定</CardTitle>
@@ -108,6 +110,7 @@ const Settings = () => {
           </div>
         </CardContent>
       </Card>
+      )}
 
       <Card>
         <CardHeader>
@@ -134,8 +137,22 @@ const Settings = () => {
               className="mt-2"
             />
           </div>
-          <div className="watermark-overlay aspect-video bg-muted rounded-lg" data-watermark={settings.watermarkText}>
-            <div className="w-full h-full bg-gradient-to-br from-muted to-muted-foreground/20 rounded-lg" />
+          <div className="watermark-overlay aspect-video bg-muted rounded-lg relative overflow-hidden" data-watermark={settings.watermarkText}>
+            {/* Mock standing image preview */}
+            <div className="w-full h-full bg-gradient-to-br from-muted to-muted-foreground/20 rounded-lg flex items-center justify-center">
+              <div className="w-24 h-32 bg-primary/20 rounded-lg flex items-center justify-center">
+                <span className="text-xs text-primary">立ち絵</span>
+              </div>
+            </div>
+            {/* Watermark overlay */}
+            <div 
+              className="absolute inset-0 flex items-center justify-center pointer-events-none"
+              style={{ opacity: settings.watermarkOpacity }}
+            >
+              <div className="text-white text-lg font-bold bg-black/50 px-2 py-1 rounded">
+                {settings.watermarkText}
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

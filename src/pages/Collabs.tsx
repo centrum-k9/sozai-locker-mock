@@ -17,12 +17,14 @@ import { CollabEvent } from '@/features/collab/types';
 import { collabsApi } from '@/features/collab/services/collabs';
 import { useQuota } from '@/features/plan/hooks/useQuota';
 import { toast } from 'sonner';
+import { CreateCollabModal } from '@/components/collab/CreateCollabModal';
 import { formatDistanceToNow } from 'date-fns';
 import { ja } from 'date-fns/locale';
 
 const Collabs = () => {
   const [collabs, setCollabs] = useState<CollabEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const { trackPageView, trackClick } = useAnalytics();
   const { quota, plan, isLoading: quotaLoading } = useQuota();
 
@@ -89,9 +91,9 @@ const Collabs = () => {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-bold">コラボ管理</h1>
-            <Badge variant="outline" className="animate-pulse border-primary/50 text-primary">
-              NEW
-            </Badge>
+                  <Badge variant="outline" className="animate-pulse border-primary/50 text-primary">
+                    BETA
+                  </Badge>
           </div>
           <p className="text-muted-foreground">
             コラボ相手と素材を管理して、配信準備をスムーズに 🎬
@@ -122,7 +124,7 @@ const Collabs = () => {
                 return;
               }
               trackClick('create-collab', 'collabs');
-              // TODO: Navigate to create collab page
+              setShowCreateModal(true);
             }}
           >
             <Plus className="mr-2 h-5 w-5" />
@@ -229,7 +231,7 @@ const Collabs = () => {
             disabled={!canCreateCollab}
             onClick={() => {
               trackClick('create-first-collab', 'collabs-empty');
-              // TODO: Navigate to create collab page
+              setShowCreateModal(true);
             }}
           >
             <Plus className="mr-2 h-5 w-5" />
@@ -237,6 +239,15 @@ const Collabs = () => {
           </Button>
         </div>
       )}
+
+      {/* Create Collab Modal */}
+      <CreateCollabModal
+        open={showCreateModal}
+        onOpenChange={setShowCreateModal}
+        onCollabCreated={(newCollab) => {
+          setCollabs(prev => [newCollab, ...prev]);
+        }}
+      />
     </div>
   );
 };

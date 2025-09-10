@@ -12,7 +12,10 @@ import {
   TrendingUp,
   Clock,
   Plus,
-  Eye
+  Eye,
+  User,
+  Bell,
+  Calendar
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
@@ -20,6 +23,8 @@ import { assetApi, collectionApi } from '@/services/mockClient';
 import { Asset, Collection } from '@/core/types';
 import { toast } from 'sonner';
 import { UploadModal } from '@/components/modals/UploadModal';
+import { DownloadNotificationCard } from '@/components/dashboard/DownloadNotificationCard';
+import { UpcomingCollabsCard } from '@/components/dashboard/UpcomingCollabsCard';
 
 const Dashboard = () => {
   const [recentAssets, setRecentAssets] = useState<Asset[]>([]);
@@ -126,41 +131,100 @@ const Dashboard = () => {
             今日も素晴らしい作品を作っていきましょう 🎨
           </p>
         </div>
-        <Button
-          size="lg"
-          className="hero-gradient hover:opacity-90 transition-opacity"
-          onClick={() => {
-            trackClick('upload-quick', 'dashboard');
-            setShowUpload(true);
-          }}
-        >
-          <Upload className="mr-2 h-5 w-5" />
-          素材をアップロード
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            size="lg"
+            className="hero-gradient hover:opacity-90 transition-opacity"
+            onClick={() => {
+              trackClick('upload-quick', 'dashboard');
+              setShowUpload(true);
+            }}
+          >
+            <Upload className="mr-2 h-5 w-5" />
+            素材をアップロード
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            asChild
+          >
+            <Link to="/my-profile">
+              <User className="mr-2 h-5 w-5" />
+              マイページ
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statsCards.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={stat.title} className="card-gradient border-0 hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {stat.title}
-                    </p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                  </div>
-                  <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                    <Icon className={`h-6 w-6 ${stat.color}`} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+      {/* Top Cards Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <DownloadNotificationCard />
+        <UpcomingCollabsCard />
+      </div>
+
+      {/* Stats Grid - Modified */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Asset count only */}
+        <Card className="card-gradient border-0">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  素材アップロード数
+                </p>
+                <p className="text-2xl font-bold">{stats.assets}/5</p>
+              </div>
+              <div className="p-3 rounded-lg bg-blue-100 dark:bg-blue-900">
+                <FileImage className="h-6 w-6 text-blue-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Share links - button only */}
+        <Card className="card-gradient border-0">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  共有リンク
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2"
+                  onClick={() => {
+                    // Generate profile share link
+                    const shareUrl = `${window.location.origin}/profile/${user?.id}`;
+                    navigator.clipboard.writeText(shareUrl);
+                  }}
+                >
+                  発行する
+                </Button>
+              </div>
+              <div className="p-3 rounded-lg bg-purple-100 dark:bg-purple-900">
+                <Share2 className="h-6 w-6 text-purple-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Placeholder third card */}
+        <Card className="card-gradient border-0">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  今週の活動
+                </p>
+                <p className="text-2xl font-bold">3</p>
+              </div>
+              <div className="p-3 rounded-lg bg-green-100 dark:bg-green-900">
+                <TrendingUp className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Recent Assets */}

@@ -25,7 +25,9 @@ import {
   Tag,
   Shield,
   Eye,
-  Copy
+  Copy,
+  User,
+  Heart
 } from 'lucide-react';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { assetApi, shareApi, downloadLogApi } from '@/services/mockClient';
@@ -188,17 +190,6 @@ const AssetDetail = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setShowShareModal(true);
-              trackClick('share-asset', 'asset-detail');
-            }}
-          >
-            <Share2 className="mr-2 h-4 w-4" />
-            共有
-          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -390,38 +381,58 @@ const AssetDetail = () => {
               <div>
                 <Label className="text-xs text-muted-foreground">作成日時</Label>
                 <p className="mt-1 text-sm">{formatDate(asset.createdAt)}</p>
+                
+                {/* Action Buttons */}
+                <div className="pt-4 border-t">
+                  <div className="grid grid-cols-1 gap-2">
+                    <Button variant="outline" size="sm">
+                      <User className="mr-2 h-4 w-4" />
+                      立ち絵に設定
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <Eye className="mr-2 h-4 w-4" />
+                      KVに設定
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <Heart className="mr-2 h-4 w-4" />
+                      お気に入り
+                    </Button>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* License Info */}
-          <Card className="card-gradient border-0">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Shield className="mr-2 h-5 w-5" />
-                ライセンス情報
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Badge variant="outline" className={licensePresetInfo[asset.licensePreset].color}>
-                  {licensePresetInfo[asset.licensePreset].label}
-                </Badge>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {licensePresetInfo[asset.licensePreset].description}
-                </p>
-              </div>
-              
-              {asset.creditText && (
+          {/* License Info - Hidden per requirements */}
+          {false && (
+            <Card className="card-gradient border-0">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Shield className="mr-2 h-5 w-5" />
+                  ライセンス情報
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div>
-                  <Label className="text-xs text-muted-foreground">クレジット表記</Label>
-                  <div className="mt-1 p-2 bg-muted rounded text-sm font-mono">
-                    {asset.creditText}
-                  </div>
+                  <Badge variant="outline" className={licensePresetInfo[asset.licensePreset].color}>
+                    {licensePresetInfo[asset.licensePreset].label}
+                  </Badge>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {licensePresetInfo[asset.licensePreset].description}
+                  </p>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+                
+                {asset.creditText && (
+                  <div>
+                    <Label className="text-xs text-muted-foreground">クレジット表記</Label>
+                    <div className="mt-1 p-2 bg-muted rounded text-sm font-mono">
+                      {asset.creditText}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Download Stats */}
           {downloadLogs.length > 0 && (
@@ -445,8 +456,8 @@ const AssetDetail = () => {
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+            </CardContent>
+          </Card>
           )}
         </div>
       </div>

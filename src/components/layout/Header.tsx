@@ -17,7 +17,9 @@ import {
   Menu,
   Home,
   FileImage,
-  FolderOpen
+  FolderOpen,
+  Share2,
+  Users
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
@@ -85,19 +87,43 @@ export const Header = () => {
         )}
 
         {/* Actions */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2">
           {isAuthenticated ? (
             <>
-              {/* Upload Button */}
+              {/* New Action Buttons */}
               <Link to="/dashboard?upload=true">
                 <Button 
-                  variant="default" 
+                  variant="outline" 
                   size="sm"
-                  className="hero-gradient hover:opacity-90 transition-opacity"
                   onClick={() => trackClick('upload-header', 'header')}
                 >
                   <Upload className="h-4 w-4 mr-2" />
-                  アップロード
+                  素材をアップロード
+                </Button>
+              </Link>
+
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  // Generate profile share link
+                  const shareUrl = `${window.location.origin}/profile/${user?.id}`;
+                  navigator.clipboard.writeText(shareUrl);
+                  trackClick('share-profile-header', 'header');
+                }}
+              >
+                <Share2 className="h-4 w-4 mr-2" />
+                素材を共有
+              </Button>
+
+              <Link to="/friends">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => trackClick('friends-header', 'header')}
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  友だちの素材をDL
                 </Button>
               </Link>
 
