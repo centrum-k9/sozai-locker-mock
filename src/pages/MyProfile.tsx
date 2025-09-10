@@ -18,6 +18,7 @@ import {
   FolderOpen,
   Plus
 } from 'lucide-react';
+import { ShareMyPageButton } from '@/components/profile/ShareMyPageButton';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { assetApi, favoriteFolderApi } from '@/services/mockClient';
@@ -116,12 +117,15 @@ const MyProfile = () => {
                   </h1>
                   <p className="text-muted-foreground">@{user.name}</p>
                 </div>
-                <Button variant="outline" asChild>
-                  <Link to="/settings">
-                    <Settings className="h-4 w-4 mr-2" />
-                    設定
-                  </Link>
-                </Button>
+                <div className="flex gap-2">
+                  <ShareMyPageButton />
+                  <Button variant="outline" asChild>
+                    <Link to="/settings">
+                      <Settings className="h-4 w-4 mr-2" />
+                      設定
+                    </Link>
+                  </Button>
+                </div>
               </div>
 
               {/* Social Links */}

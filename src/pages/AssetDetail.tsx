@@ -374,7 +374,7 @@ const AssetDetail = () => {
               </div>
               
               <div>
-                <Label className="text-xs text-muted-foreground">MIME タイプ</Label>
+                <Label className="text-xs text-muted-foreground">ファイル形式</Label>
                 <p className="mt-1 font-mono text-sm">{asset.mime}</p>
               </div>
               

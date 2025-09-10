@@ -15,8 +15,12 @@ import {
   User,
   Image as ImageIcon,
   Package,
-  Monitor
+  Monitor,
+  Edit,
+  Plus
 } from 'lucide-react';
+import { EditCollabDialog } from '@/components/collab/EditCollabDialog';
+import { PlatformIcon } from '@/components/collab/PlatformIcon';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { CollabEvent, CollabMember, Friend } from '@/features/collab/types';
 import { collabsApi } from '@/features/collab/services/collabs';
@@ -39,6 +43,7 @@ const CollabDetail = () => {
   const [assets, setAssets] = useState<Record<string, Asset>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [showTextGenerator, setShowTextGenerator] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   useEffect(() => {
     trackPageView('collab-detail');
@@ -121,6 +126,18 @@ const CollabDetail = () => {
     }
   };
 
+  const handleEditCollab = async (data: Partial<CollabEvent>) => {
+    if (!id) return;
+    
+    try {
+      // Mock update
+      setCollab(prev => prev ? { ...prev, ...data } : null);
+      toast.success('コラボ情報を更新しました');
+    } catch (error) {
+      toast.error('更新に失敗しました');
+    }
+  };
+
   const getMemberFriend = (member: CollabMember): Friend | undefined => {
     return friends.find(friend => friend.id === member.friendId);
   };
@@ -189,25 +206,36 @@ const CollabDetail = () => {
               コラボ情報
             </CardTitle>
             <div className="flex gap-2">
-              {collab.platform && (
-                <Badge variant="outline">{collab.platform}</Badge>
-              )}
               <Button 
                 variant="outline" 
+                size="sm"
+                onClick={() => setShowEditDialog(true)}
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                コラボ情報編集
+              </Button>
+              {collab.platform && (
+                <div className="flex items-center gap-1 px-3 py-1 rounded-md border">
+                  <PlatformIcon platform={collab.platform} />
+                  <span className="text-sm">{collab.platform}</span>
+                </div>
+              )}
+              <Button 
+                className="hero-gradient hover:opacity-90" 
                 size="sm"
                 onClick={() => setShowTextGenerator(true)}
               >
                 <Sparkles className="mr-2 h-4 w-4" />
-                テキスト生成
+                概要欄テキスト作成
               </Button>
               <Button
-                variant="outline"
+                className="hero-gradient hover:opacity-90"
                 size="sm"
                 asChild
               >
                 <Link to={`/collabs/${collab.id}/overlay`}>
                   <Monitor className="mr-2 h-4 w-4" />
-                  オーバーレイ生成
+                  OBS素材作成
                 </Link>
               </Button>
             </div>
@@ -250,21 +278,30 @@ const CollabDetail = () => {
       {/* Members and Assets */}
       <Card className="card-gradient border-0">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center">
-              <Users className="mr-2 h-5 w-5" />
-              メンバーと素材 ({members.length})
-            </CardTitle>
-            {members.length > 0 && (
-              <Button 
-                className="hero-gradient hover:opacity-90"
-                onClick={handleBulkDownload}
-              >
-                <Package className="mr-2 h-4 w-4" />
-                まとめてDL
-              </Button>
-            )}
-          </div>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center">
+                <Users className="mr-2 h-5 w-5" />
+                メンバーと素材 ({members.length})
+              </CardTitle>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  コラボ相手を追加
+                </Button>
+                {members.length > 0 && (
+                  <Button 
+                    className="hero-gradient hover:opacity-90"
+                    onClick={handleBulkDownload}
+                  >
+                    <Package className="mr-2 h-4 w-4" />
+                    まとめてDL
+                  </Button>
+                )}
+              </div>
+            </div>
         </CardHeader>
         <CardContent>
           {members.length > 0 ? (
@@ -287,7 +324,12 @@ const CollabDetail = () => {
                       
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold">{friend.displayName}</h3>
+                          <Link 
+                            to={`/profile/${friend.id}`}
+                            className="font-semibold hover:text-primary transition-colors"
+                          >
+                            {friend.displayName}
+                          </Link>
                           {member.role && (
                             <Badge variant={member.role === 'Main' ? 'default' : 'secondary'}>
                               {member.role}
@@ -412,12 +454,19 @@ const CollabDetail = () => {
         </CardContent>
       </Card>
 
-      {/* Text Generator Modal */}
+      {/* Modals */}
       <TextGeneratorModal
         open={showTextGenerator}
         onOpenChange={setShowTextGenerator}
         members={memberFriends}
         eventTitle={collab.title}
+      />
+
+      <EditCollabDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        collab={collab}
+        onSave={handleEditCollab}
       />
     </div>
   );

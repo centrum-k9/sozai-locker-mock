@@ -22,6 +22,7 @@ import {
   Eye,
   Code
 } from 'lucide-react';
+import { OverlayPreviewPane } from '@/components/overlay/OverlayPreviewPane';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
@@ -389,61 +390,20 @@ const OverlayGenerator = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch
-                    checked={appearance.showAvatar}
-                    onCheckedChange={(checked) =>
-                      setAppearance({ ...appearance, showAvatar: checked })
-                    }
-                  />
-                  <Label>アバター表示</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    checked={appearance.showStandingImage}
-                    onCheckedChange={(checked) =>
-                      setAppearance({ ...appearance, showStandingImage: checked })
-                    }
-                  />
-                  <Label>立ち絵表示</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
                     checked={appearance.highlightSpeaking}
                     onCheckedChange={(checked) =>
                       setAppearance({ ...appearance, highlightSpeaking: checked })
                     }
                   />
-                  <Label>発話ハイライト</Label>
+                  <Label>しゃべったときに光らせる</Label>
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>背景設定</Label>
-                <Select
-                  value={appearance.background}
-                  onValueChange={(value) =>
-                    setAppearance({ ...appearance, background: value as 'transparent' | 'solid' })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="transparent">透明</SelectItem>
-                    <SelectItem value="solid">ソリッド</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>角丸: {appearance.cornerRadius}px</Label>
-                <Slider
-                  value={[appearance.cornerRadius]}
-                  onValueChange={([value]) =>
-                    setAppearance({ ...appearance, cornerRadius: value })
-                  }
-                  max={20}
-                  step={1}
-                />
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={false}
+                    onCheckedChange={() => {}}
+                  />
+                  <Label>しゃべったときに跳ねさせる</Label>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -473,6 +433,16 @@ const OverlayGenerator = () => {
 
         {/* Preview & Output Panel */}
         <div className="space-y-6">
+          {/* Live Preview */}
+          <OverlayPreviewPane
+            appearance={appearance}
+            members={voiceMembers.map((member, index) => ({
+              id: member.id,
+              displayName: member.displayName,
+              isSpeaking: index === 0, // Demo: first member is speaking
+            }))}
+          />
+
           {/* Voice Members Preview */}
           {voiceMembers.length > 0 && (
             <Card className="card-gradient border-0">

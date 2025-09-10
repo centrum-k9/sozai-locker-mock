@@ -12,8 +12,10 @@ import {
   Heart,
   ExternalLink,
   User,
-  Calendar
+  Calendar,
+  Plus
 } from 'lucide-react';
+import { AddToCollabDialog } from '@/components/friends/AddToCollabDialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { downloadHistoryApi, assetApi, userApi } from '@/services/mockClient';
@@ -33,6 +35,8 @@ const FriendsAssets = () => {
   const [friendsData, setFriendsData] = useState<FriendAssetData[]>([]);
   const [recentDownloads, setRecentDownloads] = useState<(Asset & { downloadedAt: string; owner: UserType })[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAddToCollab, setShowAddToCollab] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState<UserType | null>(null);
 
   const { user } = useAuth();
   const { trackPageView, trackClick } = useAnalytics();
@@ -140,7 +144,7 @@ const FriendsAssets = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-3">
             <Users className="h-8 w-8" />
-            友達の素材
+            友だちの素材
           </h1>
           <p className="text-muted-foreground mt-2">
             過去にダウンロードした他のユーザーの素材と最新情報
@@ -148,51 +152,108 @@ const FriendsAssets = () => {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="card-gradient border-0">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">フォロー中</p>
-                <p className="text-2xl font-bold text-primary">{friendsData.length}</p>
-              </div>
-              <Users className="h-8 w-8 text-primary" />
-            </div>
-          </CardContent>
-        </Card>
+      {/* Friends List */}
+      <Card className="card-gradient border-0">
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Users className="mr-2 h-5 w-5" />
+            友だち ({friendsData.length})
+          </CardTitle>
+          <CardDescription>
+            過去にダウンロードしたユーザー一覧
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {friendsData.length > 0 ? (
+            <div className="space-y-4">
+              {friendsData.map((friend) => (
+                <div
+                  key={friend.user.id}
+                  className="flex items-center justify-between p-4 rounded-lg border hover:shadow-md transition-all duration-200 group"
+                >
+                  <div className="flex items-center space-x-4">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={friend.user.avatar} />
+                      <AvatarFallback>
+                        <User className="h-6 w-6" />
+                      </AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold group-hover:text-primary transition-colors">
+                        {friend.user.displayName || friend.user.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        @{friend.user.name}
+                      </p>
+                      <div className="flex items-center mt-1 text-xs text-muted-foreground">
+                        <Download className="h-3 w-3 mr-1" />
+                        <span>{friend.assets.length}個の素材をダウンロード</span>
+                        <Calendar className="h-3 w-3 ml-4 mr-1" />
+                        <span>
+                          最終: {format(new Date(friend.lastDownloadDate), 'MM月dd日', { locale: ja })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
-        <Card className="card-gradient border-0">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">総ダウンロード数</p>
-                <p className="text-2xl font-bold text-green-600">{totalDownloads}</p>
-              </div>
-              <Download className="h-8 w-8 text-green-600" />
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedFriend(friend.user);
+                        setShowAddToCollab(true);
+                      }}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      コラボリストへ追加
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                    >
+                      <Link 
+                        to={`/profile/${friend.user.id}`}
+                        onClick={() => trackClick('view-friend-profile', 'friends-list')}
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        プロフィール
+                      </Link>
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        trackClick('favorite-friend', 'friends-list');
+                        toast.success('お気に入りに追加しました');
+                      }}
+                    >
+                      <Heart className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="card-gradient border-0">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">今週のDL</p>
-                <p className="text-2xl font-bold text-blue-600">
-                  {recentDownloads.filter(asset => {
-                    const downloadDate = new Date(asset.downloadedAt);
-                    const weekAgo = new Date();
-                    weekAgo.setDate(weekAgo.getDate() - 7);
-                    return downloadDate > weekAgo;
-                  }).length}
-                </p>
-              </div>
-              <Clock className="h-8 w-8 text-blue-600" />
+          ) : (
+            <div className="text-center py-12">
+              <Users className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
+              <h3 className="text-lg font-semibold mb-2">まだ友だちはいません</h3>
+              <p className="text-muted-foreground mb-4">
+                他のユーザーの素材をダウンロードすると、ここに表示されます
+              </p>
+              <Button variant="outline" asChild>
+                <Link to="/assets">
+                  素材を探す
+                </Link>
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Recent Downloads */}
       {recentDownloads.length > 0 && (
@@ -200,10 +261,10 @@ const FriendsAssets = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Clock className="mr-2 h-5 w-5" />
-              最近ダウンロードした素材
+              最近のダウンロード履歴
             </CardTitle>
             <CardDescription>
-              最新のダウンロード履歴から表示しています
+              ここから再ダウンロードできます。再DL時は相手に通知が送られます
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -256,96 +317,18 @@ const FriendsAssets = () => {
         </Card>
       )}
 
-      {/* Friends List */}
-      <Card className="card-gradient border-0">
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Users className="mr-2 h-5 w-5" />
-            フォロー中のユーザー
-          </CardTitle>
-          <CardDescription>
-            過去にダウンロードしたユーザーのページへのリンクです
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {friendsData.length > 0 ? (
-            <div className="space-y-4">
-              {friendsData.map((friend) => (
-                <div
-                  key={friend.user.id}
-                  className="flex items-center justify-between p-4 rounded-lg border hover:shadow-md transition-all duration-200 group"
-                >
-                  <div className="flex items-center space-x-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={friend.user.avatar} />
-                      <AvatarFallback>
-                        <User className="h-6 w-6" />
-                      </AvatarFallback>
-                    </Avatar>
-                    
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold group-hover:text-primary transition-colors">
-                        {friend.user.displayName || friend.user.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        @{friend.user.name}
-                      </p>
-                      <div className="flex items-center mt-1 text-xs text-muted-foreground">
-                        <Download className="h-3 w-3 mr-1" />
-                        <span>{friend.assets.length}個の素材をダウンロード</span>
-                        <Calendar className="h-3 w-3 ml-4 mr-1" />
-                        <span>
-                          最終: {format(new Date(friend.lastDownloadDate), 'MM月dd日', { locale: ja })}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                    >
-                      <Link 
-                        to={`/profile/${friend.user.id}`}
-                        onClick={() => trackClick('view-friend-profile', 'friends-list')}
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        プロフィール
-                      </Link>
-                    </Button>
-                    
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        trackClick('favorite-friend', 'friends-list');
-                        toast.success('お気に入りに追加しました');
-                      }}
-                    >
-                      <Heart className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Users className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">まだフォローしているユーザーはいません</h3>
-              <p className="text-muted-foreground mb-4">
-                他のユーザーの素材をダウンロードすると、ここに表示されます
-              </p>
-              <Button variant="outline" asChild>
-                <Link to="/assets">
-                  素材を探す
-                </Link>
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Add to Collab Dialog */}
+      {selectedFriend && (
+        <AddToCollabDialog
+          open={showAddToCollab}
+          onOpenChange={setShowAddToCollab}
+          friend={{
+            id: selectedFriend.id,
+            displayName: selectedFriend.displayName || selectedFriend.name,
+            createdAt: new Date().toISOString(),
+          }}
+        />
+      )}
     </div>
   );
 };
