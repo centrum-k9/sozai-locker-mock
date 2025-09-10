@@ -6,7 +6,8 @@ import {
   Settings,
   Home,
   Bell,
-  Heart
+  Heart,
+  Video
 } from 'lucide-react';
 import {
   Sidebar,
@@ -29,6 +30,7 @@ const mainItems = [
   { title: 'マイページ', url: '/my-profile', icon: User },
   { title: '自分の素材', url: '/assets', icon: FileImage },
   { title: '友達の素材', url: '/friends', icon: Users },
+  { title: 'コラボ管理', url: '/collabs', icon: Video, isNew: true },
   { title: '設定', url: '/settings', icon: Settings },
 ];
 
@@ -135,7 +137,16 @@ export function AppSidebar() {
                       className={({ isActive }) => getNavCls(isActive || (item.url === '/dashboard' && currentPath === '/'))}
                     >
                       <item.icon className="mr-2 h-4 w-4" />
-                      {state !== "collapsed" && <span>{item.title}</span>}
+                      {state !== "collapsed" && (
+                        <div className="flex items-center gap-2 flex-1">
+                          <span>{item.title}</span>
+                          {'isNew' in item && item.isNew && (
+                            <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full font-medium animate-pulse">
+                              NEW
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
