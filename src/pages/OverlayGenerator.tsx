@@ -244,7 +244,7 @@ const OverlayGenerator = () => {
         <div className="flex-1">
           <h1 className="text-3xl font-bold flex items-center">
             <Monitor className="mr-3 h-8 w-8" />
-            オーバーレイ生成
+            OBS素材作成
           </h1>
           <p className="text-muted-foreground mt-1">{collab.title}</p>
         </div>
@@ -399,8 +399,10 @@ const OverlayGenerator = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch
-                    checked={false}
-                    onCheckedChange={() => {}}
+                    checked={appearance.bounceOnSpeaking || false}
+                    onCheckedChange={(checked) =>
+                      setAppearance({ ...appearance, bounceOnSpeaking: checked })
+                    }
                   />
                   <Label>しゃべったときに跳ねさせる</Label>
                 </div>
@@ -427,7 +429,7 @@ const OverlayGenerator = () => {
             className="w-full hero-gradient hover:opacity-90"
             size="lg"
           >
-            {isGenerating ? '生成中...' : 'オーバーレイを生成'}
+            {isGenerating ? '生成中...' : '素材を作成'}
           </Button>
         </div>
 
@@ -485,44 +487,34 @@ const OverlayGenerator = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex gap-2">
-                  <Button onClick={handleCopyHTML} variant="outline" size="sm">
-                    <Copy className="mr-2 h-4 w-4" />
-                    HTMLをコピー
-                  </Button>
-                  <Button onClick={handleDownloadHTML} variant="outline" size="sm">
-                    <Download className="mr-2 h-4 w-4" />
-                    ダウンロード
-                  </Button>
+                <div className="space-y-2">
+                  <Label>ブラウザソースURL</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={hostedUrl}
+                      readOnly
+                      className="font-mono text-sm"
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        navigator.clipboard.writeText(hostedUrl);
+                        toast.success('URLをコピーしました');
+                      }}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
 
-                {hostedUrl && (
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <Label className="text-xs font-medium">アプリ内URL:</Label>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Input
-                        value={hostedUrl}
-                        readOnly
-                        className="text-xs"
-                      />
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          navigator.clipboard.writeText(hostedUrl);
-                          toast.success('URLをコピーしました');
-                        }}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                <div className="text-xs text-muted-foreground">
-                  <p>• OBSのブラウザソースにHTMLまたはURLを設定してください</p>
-                  <p>• 推奨解像度: 1920x1080</p>
-                  <p>• 透明背景が選択されている場合、Webページの不透明度は100%に設定してください</p>
+                {/* Hints */}
+                <div className="bg-muted/50 rounded-lg p-4">
+                  <h5 className="font-medium mb-2">💡 使い方</h5>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    <li>• OBSのブラウザソースURLを設定してください</li>
+                    <li>• 推奨解像度: 1920x1080</li>
+                  </ul>
                 </div>
               </CardContent>
             </Card>

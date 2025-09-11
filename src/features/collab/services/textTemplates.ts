@@ -29,13 +29,6 @@ export const generateCollabText = (options: TextGenerationOptions): string => {
 const generateOverviewText = (members: Friend[], eventTitle?: string): string => {
   const lines: string[] = [];
   
-  if (eventTitle) {
-    lines.push(`🎥 ${eventTitle}`);
-    lines.push('');
-  }
-  
-  lines.push('📋 出演者:');
-  
   members.forEach(member => {
     const memberLines: string[] = [];
     memberLines.push(`・${member.displayName}`);
@@ -59,13 +52,6 @@ const generateOverviewText = (members: Friend[], eventTitle?: string): string =>
 const generateAnnouncementA = (members: Friend[], eventTitle?: string): string => {
   const lines: string[] = [];
   
-  if (eventTitle) {
-    lines.push(`🎉 ${eventTitle}`);
-    lines.push('');
-  }
-  
-  lines.push('🎪 コラボメンバー:');
-  
   members.forEach(member => {
     let line = `・${member.displayName}`;
     if (member.xHandle) {
@@ -80,13 +66,6 @@ const generateAnnouncementA = (members: Friend[], eventTitle?: string): string =
 // パターン3: 告知B（名前 + #ハッシュタグ、改行区切り）
 const generateAnnouncementB = (members: Friend[], eventTitle?: string): string => {
   const lines: string[] = [];
-  
-  if (eventTitle) {
-    lines.push(`✨ ${eventTitle}`);
-    lines.push('');
-  }
-  
-  lines.push('🏷️ 参加者:');
   
   members.forEach(member => {
     let line = `・${member.displayName}`;
@@ -128,9 +107,9 @@ export const getPatternLabel = (pattern: TextPattern): string => {
     case 'overview':
       return '概要欄用';
     case 'announcement-a':
-      return '告知A (@メンション)';
+      return 'SNS告知用（@メンション）';
     case 'announcement-b':
-      return '告知B (#ハッシュタグ)';
+      return 'SNS告知用（#ハッシュタグ）';
     default:
       return '';
   }

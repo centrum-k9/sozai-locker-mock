@@ -37,6 +37,7 @@ export type OverlayAppearance = {
   gap: number;
   nameStyle: 'plain' | 'shadow' | 'stroke';
   highlightSpeaking: boolean;
+  bounceOnSpeaking?: boolean;
 };
 
 export type OverlayConfig = {
@@ -72,4 +73,5 @@ export const defaultAppearance: OverlayAppearance = {
   gap: 16,
   nameStyle: 'shadow',
   highlightSpeaking: true,
+  bounceOnSpeaking: false,
 };

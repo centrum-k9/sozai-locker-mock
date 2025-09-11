@@ -88,7 +88,7 @@ export const TextGeneratorModal: React.FC<TextGeneratorModalProps> = ({
           <DialogHeader>
             <DialogTitle className="flex items-center">
               <Sparkles className="mr-2 h-5 w-5" />
-              貼り付けテキスト生成
+              概要欄テキスト作成
             </DialogTitle>
             <DialogDescription>
               コラボメンバーが選択されていません。先にメンバーを追加してください。
@@ -103,13 +103,13 @@ export const TextGeneratorModal: React.FC<TextGeneratorModalProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <Sparkles className="mr-2 h-5 w-5" />
-            貼り付けテキスト生成
-          </DialogTitle>
-          <DialogDescription>
-            コラボメンバー情報から各種テキストを自動生成します
-          </DialogDescription>
+            <DialogTitle className="flex items-center">
+              <Sparkles className="mr-2 h-5 w-5" />
+              概要欄テキスト作成
+            </DialogTitle>
+            <DialogDescription>
+              配信の概要欄や告知に使えるテキストを作成できます
+            </DialogDescription>
         </DialogHeader>
 
         <Tabs value={activePattern} onValueChange={(value) => setActivePattern(value as TextPattern)}>
