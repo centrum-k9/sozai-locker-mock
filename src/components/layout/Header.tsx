@@ -24,11 +24,14 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { ShareMyPageModal } from '@/components/modals/ShareMyPageModal';
 
 export const Header = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const { trackClick } = useAnalytics();
   const location = useLocation();
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const handleLogout = () => {
     trackClick('logout', 'header');
@@ -42,6 +45,7 @@ export const Header = () => {
   ];
 
   return (
+    <>
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
@@ -106,14 +110,7 @@ export const Header = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  // Generate profile share link
-                  const shareUrl = `${window.location.origin}/profile/${user?.id}`;
-                  navigator.clipboard.writeText(shareUrl);
-                  // Show toast notification
-                  const event = new CustomEvent('show-toast', { 
-                    detail: { message: 'マイページのURLをコピーしました' } 
-                  });
-                  window.dispatchEvent(event);
+                  setShowShareModal(true);
                   trackClick('share-profile-header', 'header');
                 }}
               >
@@ -213,5 +210,12 @@ export const Header = () => {
         </div>
       </div>
     </header>
+    
+    {/* Share Modal */}
+    <ShareMyPageModal 
+      open={showShareModal} 
+      onOpenChange={setShowShareModal} 
+    />
+    </>
   );
 };

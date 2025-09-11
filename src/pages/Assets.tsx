@@ -34,6 +34,7 @@ import { Asset, FilterOptions, SortOption, ViewMode, Category } from '@/core/typ
 import { licensePresetInfo, categoryInfo } from '@/services/seed';
 import { Pagination } from '@/components/ui/pagination';
 import { AssetCardActions } from '@/components/assets/AssetCardActions';
+import { WatermarkedImage } from '@/components/media/WatermarkedImage';
 import { toast } from 'sonner';
 
 const Assets = () => {
@@ -268,13 +269,11 @@ const Assets = () => {
                   <Card className="relative border transition-all duration-300 group-hover:border-primary/50 overflow-hidden">
                     <CardContent className="p-0 relative">
                       <div className="aspect-video bg-muted overflow-hidden">
-                        {asset.previewUrl && (
-                          <img
-                            src={asset.previewUrl}
-                            alt={asset.title}
-                            className="w-full h-full object-cover"
-                          />
-                        )}
+                        <WatermarkedImage
+                          src={asset.previewUrl}
+                          alt={asset.title}
+                          className="w-full h-full"
+                        />
                       </div>
                       <AssetCardActions 
                         asset={asset}
@@ -312,10 +311,9 @@ const Assets = () => {
                     <thead className="border-b">
                       <tr className="text-left">
                         <th className="p-4 font-semibold">素材</th>
-                        <th className="p-4 font-semibold">カテゴリ</th>
-                        <th className="p-4 font-semibold">ライセンス</th>
-                        <th className="p-4 font-semibold">サイズ</th>
-                        <th className="p-4 font-semibold">作成日</th>
+                         <th className="p-4 font-semibold">カテゴリ</th>
+                         <th className="p-4 font-semibold">サイズ</th>
+                         <th className="p-4 font-semibold">作成日</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -330,15 +328,13 @@ const Assets = () => {
                               className="flex items-center gap-3 hover:text-primary transition-colors"
                               onClick={() => trackClick('asset-table-click', 'assets-table')}
                             >
-                              <div className="w-12 h-12 bg-muted rounded overflow-hidden flex-shrink-0">
-                                {asset.previewUrl && (
-                                  <img
-                                    src={asset.previewUrl}
-                                    alt={asset.title}
-                                    className="w-full h-full object-cover"
-                                  />
-                                )}
-                              </div>
+                               <div className="w-12 h-12 bg-muted rounded overflow-hidden flex-shrink-0">
+                                 <WatermarkedImage
+                                   src={asset.previewUrl}
+                                   alt={asset.title}
+                                   className="w-full h-full"
+                                 />
+                               </div>
                               <div>
                                 <div className="font-medium">{asset.title}</div>
                                 {asset.description && (
@@ -356,14 +352,9 @@ const Assets = () => {
                               </Badge>
                             )}
                           </td>
-                          <td className="p-4">
-                            <Badge variant="outline" className={licensePresetInfo[asset.licensePreset].color}>
-                              {licensePresetInfo[asset.licensePreset].label}
-                            </Badge>
-                          </td>
-                          <td className="p-4 text-sm text-muted-foreground">
-                            {formatFileSize(asset.size)}
-                          </td>
+                           <td className="p-4 text-sm text-muted-foreground">
+                             {formatFileSize(asset.size)}
+                           </td>
                           <td className="p-4 text-sm text-muted-foreground">
                             {formatDate(asset.createdAt)}
                           </td>

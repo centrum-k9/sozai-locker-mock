@@ -24,7 +24,7 @@ import { Asset, Collection } from '@/core/types';
 import { toast } from 'sonner';
 import { UploadModal } from '@/components/modals/UploadModal';
 import { DownloadNotificationCard } from '@/components/dashboard/DownloadNotificationCard';
-import { UpcomingCollabsCard } from '@/components/dashboard/UpcomingCollabsCard';
+import { FriendsListCard } from '@/components/dashboard/FriendsListCard';
 
 const Dashboard = () => {
   const [recentAssets, setRecentAssets] = useState<Asset[]>([]);
@@ -159,7 +159,7 @@ const Dashboard = () => {
       {/* Top Cards Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DownloadNotificationCard />
-        <UpcomingCollabsCard />
+        <FriendsListCard />
       </div>
 
       {/* Stats Grid - Modified */}

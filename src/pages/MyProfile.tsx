@@ -19,6 +19,7 @@ import {
   Plus
 } from 'lucide-react';
 import { ShareMyPageButton } from '@/components/profile/ShareMyPageButton';
+import { ChangeImageModal } from '@/components/profile/ChangeImageModal';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { assetApi, favoriteFolderApi } from '@/services/mockClient';
@@ -30,6 +31,9 @@ const MyProfile = () => {
   const [favoriteFolders, setFavoriteFolders] = useState<FavoriteFolder[]>([]);
   const [favoriteAssets, setFavoriteAssets] = useState<Asset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showImageModal, setShowImageModal] = useState<'standing' | 'keyVisual' | null>(null);
+  const [userStandingImage, setUserStandingImage] = useState<string | null>(null);
+  const [userKeyVisual, setUserKeyVisual] = useState<string | null>(null);
 
   const { user } = useAuth();
   const { trackPageView, trackClick } = useAnalytics();
@@ -176,23 +180,35 @@ const MyProfile = () => {
               <CardDescription>プロフィールのメイン画像</CardDescription>
             </div>
             {!mainAvatarAsset && (
-              <Button size="sm" variant="outline" asChild>
-                <Link to="/assets">設定</Link>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={() => setShowImageModal('standing')}
+              >
+                変更
               </Button>
             )}
           </CardHeader>
           <CardContent>
-            {mainAvatarAsset ? (
-              <Link to={`/assets/${mainAvatarAsset.id}`} className="block group">
+            {(mainAvatarAsset || userStandingImage) ? (
+              <div className="space-y-3">
                 <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden">
                   <img
-                    src={mainAvatarAsset.previewUrl}
-                    alt={mainAvatarAsset.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    src={userStandingImage || mainAvatarAsset?.previewUrl}
+                    alt={mainAvatarAsset?.title || '立ち絵'}
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="mt-3 font-semibold text-center">{mainAvatarAsset.title}</h3>
-              </Link>
+                <div className="flex justify-center">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => setShowImageModal('standing')}
+                  >
+                    変更
+                  </Button>
+                </div>
+              </div>
             ) : (
               <div className="aspect-[3/4] bg-muted rounded-lg flex items-center justify-center">
                 <div className="text-center text-muted-foreground">
@@ -215,23 +231,35 @@ const MyProfile = () => {
               <CardDescription>チャンネルやイベントのメイン画像</CardDescription>
             </div>
             {!keyVisualAsset && (
-              <Button size="sm" variant="outline" asChild>
-                <Link to="/assets">設定</Link>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={() => setShowImageModal('keyVisual')}
+              >
+                変更
               </Button>
             )}
           </CardHeader>
           <CardContent>
-            {keyVisualAsset ? (
-              <Link to={`/assets/${keyVisualAsset.id}`} className="block group">
+            {(keyVisualAsset || userKeyVisual) ? (
+              <div className="space-y-3">
                 <div className="aspect-video bg-muted rounded-lg overflow-hidden">
                   <img
-                    src={keyVisualAsset.previewUrl}
-                    alt={keyVisualAsset.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    src={userKeyVisual || keyVisualAsset?.previewUrl}
+                    alt={keyVisualAsset?.title || 'キービジュアル'}
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="mt-3 font-semibold text-center">{keyVisualAsset.title}</h3>
-              </Link>
+                <div className="flex justify-center">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => setShowImageModal('keyVisual')}
+                  >
+                    変更
+                  </Button>
+                </div>
+              </div>
             ) : (
               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                 <div className="text-center text-muted-foreground">
@@ -337,6 +365,22 @@ const MyProfile = () => {
             </div>
           </CardContent>
         </Card>
+      )}
+      
+      {/* Change Image Modal */}
+      {showImageModal && (
+        <ChangeImageModal
+          open={!!showImageModal}
+          onOpenChange={() => setShowImageModal(null)}
+          type={showImageModal}
+          onImageSelected={(imageUrl) => {
+            if (showImageModal === 'standing') {
+              setUserStandingImage(imageUrl);
+            } else if (showImageModal === 'keyVisual') {
+              setUserKeyVisual(imageUrl);
+            }
+          }}
+        />
       )}
     </div>
   );

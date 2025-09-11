@@ -27,7 +27,8 @@ import {
   Eye,
   Copy,
   User,
-  Heart
+  Heart,
+  FolderOpen
 } from 'lucide-react';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { assetApi, shareApi, downloadLogApi } from '@/services/mockClient';
@@ -35,6 +36,7 @@ import { Asset, ShareLink, DownloadLog } from '@/core/types';
 import { licensePresetInfo, categoryInfo } from '@/services/seed';
 import { toast } from 'sonner';
 import { ShareModal } from '@/components/modals/ShareModal';
+import { WatermarkedImage } from '@/components/media/WatermarkedImage';
 
 const AssetDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -217,13 +219,11 @@ const AssetDetail = () => {
           <Card className="card-gradient border-0">
             <CardContent className="p-6">
               <div className="aspect-video bg-muted rounded-lg overflow-hidden mb-4">
-                {asset.previewUrl && (
-                  <img
-                    src={asset.previewUrl}
-                    alt={asset.title}
-                    className="w-full h-full object-cover"
-                  />
-                )}
+                <WatermarkedImage
+                  src={asset.previewUrl}
+                  alt={asset.title}
+                  className="w-full h-full"
+                />
               </div>
               
               {isEditing ? (
@@ -397,6 +397,31 @@ const AssetDetail = () => {
                       <Heart className="mr-2 h-4 w-4" />
                       お気に入り
                     </Button>
+                  </div>
+                  
+                  {/* Related Collections */}
+                  <div className="mt-4 pt-4 border-t">
+                    <Label className="text-xs text-muted-foreground">追加されているコレクション</Label>
+                    <div className="mt-2 space-y-2">
+                      <Link 
+                        to="/collections/collection-1" 
+                        className="block p-2 rounded hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-2">
+                          <FolderOpen className="h-4 w-4 text-primary" />
+                          <span className="text-sm">メインコレクション</span>
+                        </div>
+                      </Link>
+                      <Link 
+                        to="/collections/collection-2" 
+                        className="block p-2 rounded hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-2">
+                          <FolderOpen className="h-4 w-4 text-primary" />
+                          <span className="text-sm">お気に入り素材</span>
+                        </div>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>

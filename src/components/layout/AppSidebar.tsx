@@ -29,7 +29,7 @@ const mainItems = [
   { title: 'ダッシュボード', url: '/dashboard', icon: Home },
   { title: 'マイページ', url: '/my-profile', icon: User },
   { title: '自分の素材', url: '/assets', icon: FileImage },
-  { title: '友達の素材', url: '/friends', icon: Users },
+  { title: '友だちの素材', url: '/friends', icon: Users },
   { title: 'コラボ管理', url: '/collabs', icon: Video, isNew: true },
   { title: '設定', url: '/settings', icon: Settings },
 ];

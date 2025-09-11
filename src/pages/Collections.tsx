@@ -7,10 +7,12 @@ import { FolderOpen, Plus, Calendar } from 'lucide-react';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { collectionApi } from '@/services/mockClient';
 import { Collection } from '@/core/types';
+import { CreateCollectionModal } from '@/components/collections/CreateCollectionModal';
 
 const Collections = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const { trackPageView } = useAnalytics();
 
   useEffect(() => {
@@ -40,7 +42,7 @@ const Collections = () => {
           <h1 className="text-3xl font-bold">コレクション</h1>
           <p className="text-muted-foreground">素材をまとめて管理できます</p>
         </div>
-        <Button>
+        <Button onClick={() => setShowCreateModal(true)}>
           <Plus className="mr-2 h-4 w-4" />
           新規作成
         </Button>
@@ -72,6 +74,14 @@ const Collections = () => {
           </Link>
         ))}
       </div>
+      
+      <CreateCollectionModal
+        open={showCreateModal}
+        onOpenChange={setShowCreateModal}
+        onCollectionCreated={(collection) => {
+          setCollections(prev => [collection, ...prev]);
+        }}
+      />
     </div>
   );
 };
