@@ -342,32 +342,87 @@ const OverlayGenerator = () => {
                 </TabsContent>
               </Tabs>
 
-              <Separator className="my-4" />
-
-              <div className="space-y-4">
-                <Label>レイアウト</Label>
-                <Select value={layout} onValueChange={(value) => setLayout(value as OverlayLayout)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="grid">
-                      <div className="flex items-center gap-2">
-                        <Grid className="h-4 w-4" />
-                        グリッド
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="list">
-                      <div className="flex items-center gap-2">
-                        <List className="h-4 w-4" />
-                        リスト
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          {/* Remove layout selection - using default grid */}
+          {/* <div className="space-y-4">
+            <Label>レイアウト</Label>
+            <Select value={layout} onValueChange={(value) => setLayout(value as OverlayLayout)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="grid">
+                  <div className="flex items-center gap-2">
+                    <Grid className="h-4 w-4" />
+                    グリッド
+                  </div>
+                </SelectItem>
+                <SelectItem value="list">
+                  <div className="flex items-center gap-2">
+                    <List className="h-4 w-4" />
+                    リスト
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div> */}
             </CardContent>
           </Card>
+
+          {/* Individual member asset selection */}
+          {mode === 'individual' && voiceMembers.length > 0 && (
+            <Card className="card-gradient border-0">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Users className="mr-2 h-5 w-5" />
+                  メンバー素材設定
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  個別表示モードでは、各メンバーに紐づける素材を選択できます
+                </p>
+                {voiceMembers.map((member, index) => (
+                  <div key={member.id} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-medium">
+                        {member.displayName[0]}
+                      </div>
+                      <span className="font-medium">{member.displayName}</span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs">立ち絵/KV素材</Label>
+                        <Select defaultValue="discord-avatar">
+                          <SelectTrigger className="text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="discord-avatar">Discordアバター</SelectItem>
+                            <SelectItem value="standing-1">立ち絵素材1</SelectItem>
+                            <SelectItem value="kv-1">KV素材1</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label className="text-xs">透かし設定</Label>
+                        <Select defaultValue="with-watermark">
+                          <SelectTrigger className="text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="with-watermark">透かしあり</SelectItem>
+                            <SelectItem value="no-watermark">透かしなし</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Step 3: Appearance Settings */}
           <Card className="card-gradient border-0">
@@ -378,7 +433,7 @@ const OverlayGenerator = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div className="flex items-center space-x-2">
                   <Switch
                     checked={appearance.showName}
@@ -487,32 +542,64 @@ const OverlayGenerator = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>ブラウザソースURL</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      value={hostedUrl}
-                      readOnly
-                      className="font-mono text-sm"
-                    />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        navigator.clipboard.writeText(hostedUrl);
-                        toast.success('URLをコピーしました');
-                      }}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
+                {mode === 'individual' && voiceMembers.length > 1 ? (
+                  <div className="space-y-4">
+                    <div className="text-sm text-muted-foreground">
+                      個別表示モードで{voiceMembers.length}個のオーバーレイを作成しました
+                    </div>
+                    {voiceMembers.map((member, index) => (
+                      <div key={member.id} className="border rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-sm">{member.displayName}</span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              const memberUrl = `${hostedUrl}?user=${member.id}`;
+                              navigator.clipboard.writeText(memberUrl);
+                              toast.success('URLをコピーしました');
+                            }}
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            コピー
+                          </Button>
+                        </div>
+                        <Input
+                          value={`${hostedUrl}?user=${member.id}`}
+                          readOnly
+                          className="font-mono text-xs"
+                        />
+                      </div>
+                    ))}
                   </div>
-                </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Label>ブラウザソースURL</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={hostedUrl}
+                        readOnly
+                        className="font-mono text-sm"
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          navigator.clipboard.writeText(hostedUrl);
+                          toast.success('URLをコピーしました');
+                        }}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Hints */}
                 <div className="bg-muted/50 rounded-lg p-4">
                   <h5 className="font-medium mb-2">💡 使い方</h5>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• OBSのブラウザソースURLを設定してください</li>
+                    <li>• OBSのブラウザソースにURLを設定してください</li>
                     <li>• 推奨解像度: 1920x1080</li>
                   </ul>
                 </div>

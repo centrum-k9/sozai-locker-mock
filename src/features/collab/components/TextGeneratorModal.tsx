@@ -184,9 +184,7 @@ export const TextGeneratorModal: React.FC<TextGeneratorModalProps> = ({
         <div className="bg-muted/50 rounded-lg p-4 mt-6">
           <h5 className="font-medium mb-2">💡 使い方のヒント</h5>
           <ul className="text-sm text-muted-foreground space-y-1">
-            <li>• <strong>概要欄用</strong>: YouTubeやTwitchの配信概要に貼り付け</li>
-            <li>• <strong>告知A</strong>: X（Twitter）での告知投稿用（@メンション）</li>
-            <li>• <strong>告知B</strong>: X（Twitter）での告知投稿用（#ハッシュタグ）</li>
+            <li>• 概要欄用: YouTubeやTwitchの配信概要に貼り付け</li>
             <li>• SNS情報が未入力のメンバーはリンクが省略されます</li>
           </ul>
         </div>

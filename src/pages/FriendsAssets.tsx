@@ -172,17 +172,29 @@ const FriendsAssets = () => {
                   className="flex items-center justify-between p-4 rounded-lg border hover:shadow-md transition-all duration-200 group"
                 >
                   <div className="flex items-center space-x-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={friend.user.avatar} />
-                      <AvatarFallback>
-                        <User className="h-6 w-6" />
-                      </AvatarFallback>
-                    </Avatar>
+                    <Link 
+                      to={`/profile/${friend.user.id}`}
+                      onClick={() => trackClick('view-friend-profile', 'friends-list')}
+                      className="cursor-pointer"
+                    >
+                      <Avatar className="h-12 w-12 hover:scale-105 transition-transform">
+                        <AvatarImage src={friend.user.avatar} />
+                        <AvatarFallback>
+                          <User className="h-6 w-6" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
                     
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold group-hover:text-primary transition-colors">
-                        {friend.user.displayName || friend.user.name}
-                      </h3>
+                      <Link 
+                        to={`/profile/${friend.user.id}`}
+                        onClick={() => trackClick('view-friend-profile', 'friends-list')}
+                        className="cursor-pointer"
+                      >
+                        <h3 className="font-semibold group-hover:text-primary transition-colors hover:text-primary">
+                          {friend.user.displayName || friend.user.name}
+                        </h3>
+                      </Link>
                       <p className="text-sm text-muted-foreground">
                         @{friend.user.name}
                       </p>

@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import { EditCollabDialog } from '@/components/collab/EditCollabDialog';
 import { PlatformIcon } from '@/components/collab/PlatformIcon';
+import { AddMemberToCollabDialog } from '@/components/collab/AddMemberToCollabDialog';
+import { WatermarkedImage } from '@/components/media/WatermarkedImage';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { CollabEvent, CollabMember, Friend } from '@/features/collab/types';
 import { collabsApi } from '@/features/collab/services/collabs';
@@ -44,6 +46,7 @@ const CollabDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showTextGenerator, setShowTextGenerator] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showAddMemberDialog, setShowAddMemberDialog] = useState(false);
 
   useEffect(() => {
     trackPageView('collab-detail');
@@ -201,9 +204,15 @@ const CollabDetail = () => {
       <Card className="card-gradient border-0">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center">
+            <CardTitle className="flex items-center gap-3">
               <Calendar className="mr-2 h-5 w-5" />
               コラボ情報
+              {collab.platform && (
+                <div className="flex items-center gap-1 px-2 py-1 rounded-md border text-sm">
+                  <PlatformIcon platform={collab.platform} />
+                  <span>{collab.platform}</span>
+                </div>
+              )}
             </CardTitle>
             <div className="flex gap-2">
               <Button 
@@ -214,12 +223,6 @@ const CollabDetail = () => {
                 <Edit className="mr-2 h-4 w-4" />
                 コラボ情報編集
               </Button>
-              {collab.platform && (
-                <div className="flex items-center gap-1 px-3 py-1 rounded-md border">
-                  <PlatformIcon platform={collab.platform} />
-                  <span className="text-sm">{collab.platform}</span>
-                </div>
-              )}
               <Button 
                 className="hero-gradient hover:opacity-90" 
                 size="sm"
@@ -287,6 +290,7 @@ const CollabDetail = () => {
                 <Button 
                   variant="outline"
                   size="sm"
+                  onClick={() => setShowAddMemberDialog(true)}
                 >
                   <Plus className="mr-2 h-4 w-4" />
                   コラボ相手を追加
@@ -373,10 +377,10 @@ const CollabDetail = () => {
                             className="block group"
                           >
                             <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden">
-                              <img
+                              <WatermarkedImage
                                 src={standing.previewUrl}
                                 alt={standing.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                className="w-full h-full group-hover:scale-105 transition-transform duration-200"
                               />
                             </div>
                             <p className="text-xs text-center mt-1 group-hover:text-primary">
@@ -417,10 +421,10 @@ const CollabDetail = () => {
                             className="block group"
                           >
                             <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                              <img
+                              <WatermarkedImage
                                 src={keyVisual.previewUrl}
                                 alt={keyVisual.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                className="w-full h-full group-hover:scale-105 transition-transform duration-200"
                               />
                             </div>
                             <p className="text-xs text-center mt-1 group-hover:text-primary">
@@ -467,6 +471,16 @@ const CollabDetail = () => {
         onOpenChange={setShowEditDialog}
         collab={collab}
         onSave={handleEditCollab}
+      />
+      <AddMemberToCollabDialog
+        open={showAddMemberDialog}
+        onOpenChange={setShowAddMemberDialog}
+        onMembersAdded={(memberIds) => {
+          // Mock member addition - would normally add to members state
+          console.log('Adding members:', memberIds);
+          toast.success(`${memberIds.length}名のメンバーを追加しました`);
+        }}
+        existingMemberIds={members.map(m => m.friendId)}
       />
     </div>
   );
