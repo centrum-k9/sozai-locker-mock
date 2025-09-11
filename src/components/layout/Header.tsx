@@ -109,6 +109,11 @@ export const Header = () => {
                   // Generate profile share link
                   const shareUrl = `${window.location.origin}/profile/${user?.id}`;
                   navigator.clipboard.writeText(shareUrl);
+                  // Show toast notification
+                  const event = new CustomEvent('show-toast', { 
+                    detail: { message: 'マイページのURLをコピーしました' } 
+                  });
+                  window.dispatchEvent(event);
                   trackClick('share-profile-header', 'header');
                 }}
               >
