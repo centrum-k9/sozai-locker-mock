@@ -396,7 +396,7 @@ export const uploadApi = {
     }
 
     // Generate mock URLs
-    const mockUrl = `https://mock-cdn.sozailocker.com/${file.name}`;
+    const mockUrl = `https://mock-cdn.rakukora.com/${file.name}`;
     const previewUrl = file.type.startsWith('image/') 
       ? `https://picsum.photos/400/300?random=${Date.now()}`
       : `https://picsum.photos/400/300?random=${Date.now()}`;

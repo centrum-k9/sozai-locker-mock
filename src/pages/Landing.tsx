@@ -73,7 +73,7 @@ export const Landing = () => {
           </h1>
           
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in">
-            VTuber・クリエイター向けの素材管理プラットフォーム「SozaiLocker」。
+            VTuber・クリエイター向けの素材管理プラットフォーム「ラクコラ」。
             <br />
             ライセンス管理から安全な共有まで、すべてをワンストップで。
           </p>
@@ -198,7 +198,7 @@ export const Landing = () => {
                   <div className="bg-muted/50 rounded-lg p-4 text-sm font-mono">
                     <div className="text-muted-foreground mb-1">共有リンク例:</div>
                     <div className="text-primary">
-                      sozailocker.com/s/main-character-pack
+                      rakukora.com/s/main-character-pack
                     </div>
                   </div>
                 </CardContent>
@@ -215,7 +215,7 @@ export const Landing = () => {
             素材管理を始めませんか？
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            無料でアカウントを作成して、今すぐSozaiLockerを体験してください。
+            無料でアカウントを作成して、今すぐラクコラを体験してください。
             あなたのクリエイティブワークをより効率的に。
           </p>
           

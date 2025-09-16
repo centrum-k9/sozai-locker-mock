@@ -25,7 +25,7 @@ export function BlankLayout({ children, showCTA = false }: BlankLayoutProps) {
                 SL
               </div>
               <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-                SozaiLocker
+                ラクコラ
               </span>
               <Badge variant="secondary" className="ml-2 text-xs">
                 MVP

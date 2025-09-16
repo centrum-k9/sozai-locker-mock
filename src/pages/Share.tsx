@@ -53,7 +53,7 @@ const Share = () => {
           <CardTitle className="text-2xl mb-2">
             {isAsset ? asset?.title : (content as Collection).title}
           </CardTitle>
-          <div className="watermark-overlay aspect-video bg-muted rounded-lg mb-4" data-watermark="SozaiLocker Sample">
+          <div className="watermark-overlay aspect-video bg-muted rounded-lg mb-4" data-watermark="ラクコラ Sample">
             {isAsset && asset?.previewUrl && (
               <img
                 src={asset.previewUrl}
@@ -86,7 +86,7 @@ const Share = () => {
           )}
           
           <div className="text-center text-sm text-muted-foreground">
-            Powered by SozaiLocker
+            Powered by ラクコラ
           </div>
         </CardContent>
       </Card>

@@ -92,7 +92,7 @@ export const Auth = () => {
                 SL
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold">SozaiLockerにログイン</CardTitle>
+            <CardTitle className="text-2xl font-bold">ラクコラにログイン</CardTitle>
             <CardDescription>
               素材管理を始めるためにアカウントにログインしてください
             </CardDescription>

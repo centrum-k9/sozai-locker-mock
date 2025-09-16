@@ -23,7 +23,7 @@ export const watermarkOverlayCss = `
   }
   
   .watermarked-image::before {
-    content: "SozaiLocker";
+    content: "ラクコラ";
     position: absolute;
     top: 50%;
     left: 50%;

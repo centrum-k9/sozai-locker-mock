@@ -44,7 +44,7 @@ export const IncentiveCard: React.FC<IncentiveCardProps> = ({
             )}
           </CardTitle>
           <CardDescription>
-            「#ソザイロッカー」を付けて導入感想をXに投稿すると素材枠が倍増
+            「#ラクコラ」を付けて導入感想をXに投稿すると素材枠が倍増
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -64,8 +64,8 @@ export const IncentiveCard: React.FC<IncentiveCardProps> = ({
             <div className="bg-blue-50/50 dark:bg-blue-950/20 rounded-lg p-4">
               <h4 className="font-medium mb-2">投稿例</h4>
               <div className="text-sm italic text-muted-foreground bg-background/50 rounded p-3">
-                「ソザイロッカー、VTuber仲間との素材共有がめちゃくちゃ便利！
-                コラボ準備がサクサク進む ✨ #ソザイロッカー」
+                「ラクコラ、VTuber仲間との素材共有がめちゃくちゃ便利！
+                コラボ準備がサクサク進む ✨ #ラクコラ」
               </div>
             </div>
 
@@ -78,7 +78,7 @@ export const IncentiveCard: React.FC<IncentiveCardProps> = ({
                   asChild
                 >
                   <a 
-                    href="https://x.com/intent/tweet?text=ソザイロッカー、VTuber仲間との素材共有がめちゃくちゃ便利！%0aコラボ準備がサクサク進む ✨ %23ソザイロッカー" 
+                    href="https://x.com/intent/tweet?text=ラクコラ、VTuber仲間との素材共有がめちゃくちゃ便利！%0aコラボ準備がサクサク進む ✨ %23ラクコラ" 
                     target="_blank" 
                     rel="noopener noreferrer"
                   >

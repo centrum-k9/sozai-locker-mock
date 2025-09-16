@@ -70,7 +70,7 @@ const PublicProfile = () => {
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container flex items-center justify-between h-14 px-4">
           <Link to="/" className="text-xl font-bold">
-            SozaiLocker
+            ラクコラ
           </Link>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>

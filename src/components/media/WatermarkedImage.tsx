@@ -38,7 +38,7 @@ export function WatermarkedImage({
                 letterSpacing: '2px'
               }}
             >
-              SozaiLocker
+              ラクコラ
             </div>
           </div>
         </div>

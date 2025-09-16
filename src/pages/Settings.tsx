@@ -20,7 +20,7 @@ const Settings = () => {
     email: user?.email || '',
     defaultLicense: user?.defaultLicense || 'COMM_OK_CREDIT_REQ' as LicensePreset,
     defaultCreditText: user?.defaultCreditText || '',
-    watermarkText: user?.watermarkText || 'SozaiLocker',
+    watermarkText: user?.watermarkText || 'ラクコラ',
     watermarkOpacity: user?.watermarkOpacity || 0.3,
   });
 
