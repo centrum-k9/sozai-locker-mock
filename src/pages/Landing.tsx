@@ -17,14 +17,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
-import heroCharacter from '@/assets/rakukora-hero-character.png';
-import characterUpload from '@/assets/character-upload.png';
-import characterCollab from '@/assets/character-collab.png';
-import characterText from '@/assets/character-text.png';
-import characterObs from '@/assets/character-obs.png';
-import characterBenefits from '@/assets/character-benefits.png';
-import characterCta from '@/assets/character-cta.png';
-import characterVictory from '@/assets/character-victory.png';
 
 export const Landing = () => {
   const { trackPageView, trackClick } = useAnalytics();
@@ -39,25 +31,21 @@ export const Landing = () => {
       icon: Upload,
       title: '素材アップロード',
       description: '立ち絵やキービジュアルをまとめて保存しちゃおう！',
-      character: characterUpload,
     },
     {
       icon: Users,
       title: 'コラボリスト',
       description: '友だちと一緒にリスト化。配信準備がもっとラク！',
-      character: characterCollab,
     },
     {
       icon: Zap,
       title: '告知テキスト自動生成',
       description: '概要欄や告知ポストをワンクリックで用意！',
-      character: characterText,
     },
     {
       icon: Share2,
       title: 'OBS素材作成',
       description: 'Discord通話のメンバーをオーバーレイに！',
-      character: characterObs,
     },
   ];
 
@@ -67,21 +55,18 @@ export const Landing = () => {
       title: '素材をアップロード',
       description: '立ち絵・キービジュアルをドラッグ&ドロップ',
       icon: Upload,
-      character: characterUpload,
     },
     {
       number: 2,
       title: 'コラボ相手をリスト化',
       description: '友だちを追加して一緒に準備',
       icon: Users,
-      character: characterCollab,
     },
     {
       number: 3,
       title: '一括出力！',
       description: '告知・配信・オーバーレイまで完成',
       icon: Zap,
-      character: characterVictory,
     },
   ];
 
@@ -160,13 +145,40 @@ export const Landing = () => {
               </p>
             </div>
             
-            {/* Hero Character */}
-            <div className="hidden lg:block animate-float">
-              <img 
-                src={heroCharacter} 
-                alt="ラクコラちゃん" 
-                className="w-full max-w-lg mx-auto drop-shadow-2xl"
-              />
+            {/* Hero Decorative Element */}
+            <div className="hidden lg:flex items-center justify-center animate-float">
+              <div className="relative w-96 h-96">
+                {/* Central gradient circle */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/30 to-primary/20 rounded-full blur-3xl" />
+                <div className="absolute inset-8 bg-gradient-to-tr from-accent/40 to-primary/30 rounded-full blur-2xl animate-pulse" />
+                
+                {/* Decorative floating icons */}
+                <div className="absolute top-1/4 left-1/4 animate-float">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-glow">
+                    <Upload className="w-10 h-10 text-white" />
+                  </div>
+                </div>
+                <div className="absolute top-1/4 right-1/4 animate-float" style={{ animationDelay: '0.5s' }}>
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-glow">
+                    <Users className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <div className="absolute bottom-1/4 left-1/3 animate-float" style={{ animationDelay: '1s' }}>
+                  <div className="w-18 h-18 rounded-full bg-gradient-to-br from-primary/80 to-accent/80 flex items-center justify-center shadow-glow">
+                    <Zap className="w-9 h-9 text-white" />
+                  </div>
+                </div>
+                <div className="absolute bottom-1/4 right-1/3 animate-float" style={{ animationDelay: '1.5s' }}>
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-accent/90 to-primary/90 flex items-center justify-center shadow-glow">
+                    <Share2 className="w-7 h-7 text-white" />
+                  </div>
+                </div>
+                
+                {/* Center sparkle */}
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <Sparkles className="w-16 h-16 text-primary animate-pulse" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -202,15 +214,15 @@ export const Landing = () => {
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <CardContent className="p-6 text-center relative">
-                    {/* Character mini illustration */}
-                    <div className="absolute -top-4 -right-4 w-20 h-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <img src={feature.character} alt="" className="w-full h-full object-contain" />
-                    </div>
+                    {/* Decorative gradient circle on hover */}
+                    <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-accent/30 to-primary/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
                     
-                    <div className="mb-4 flex justify-center">
-                      <div className="rounded-full bg-gradient-to-br from-accent/30 to-primary/20 p-4 text-primary shadow-md">
+                    <div className="mb-4 flex justify-center relative">
+                      <div className="rounded-full bg-gradient-to-br from-accent/30 to-primary/20 p-4 text-primary shadow-md group-hover:scale-110 transition-transform">
                         <Icon className="h-8 w-8" />
                       </div>
+                      {/* Small decorative star */}
+                      <Star className="absolute -top-2 -right-2 w-5 h-5 text-accent fill-accent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <h3 className="font-semibold mb-2 text-foreground">{feature.title}</h3>
                     <p className="text-sm text-muted-foreground">{feature.description}</p>
@@ -255,14 +267,15 @@ export const Landing = () => {
                     style={{ animationDelay: `${index * 200}ms` }}
                   >
                     <div className="relative mb-6">
-                      {/* Character illustration */}
-                      <div className="w-32 h-32 mx-auto mb-4">
-                        <img 
-                          src={step.character} 
-                          alt={step.title} 
-                          className="w-full h-full object-contain drop-shadow-lg animate-float"
-                          style={{ animationDelay: `${index * 300}ms` }}
-                        />
+                      {/* Decorative icon circle */}
+                      <div className="w-32 h-32 mx-auto mb-4 relative">
+                        <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full blur-xl animate-pulse" />
+                        <div className="absolute inset-4 bg-gradient-to-br from-primary/30 to-accent/30 rounded-full flex items-center justify-center">
+                          <Icon className="w-16 h-16 text-primary" />
+                        </div>
+                        {/* Small stars around */}
+                        <Star className="absolute -top-2 -right-2 w-6 h-6 text-accent fill-accent animate-pulse" />
+                        <Sparkles className="absolute -bottom-2 -left-2 w-6 h-6 text-primary animate-pulse" style={{ animationDelay: '0.5s' }} />
                       </div>
                       
                       <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-2xl font-bold shadow-glow">
@@ -345,17 +358,19 @@ export const Landing = () => {
             </div>
 
             <div className="relative">
-              {/* Character illustration */}
+              {/* Decorative floating element */}
               <div className="absolute -top-10 -left-10 w-32 h-32 animate-float">
-                <img src={characterBenefits} alt="" className="w-full h-full object-contain drop-shadow-lg" />
+                <div className="w-full h-full rounded-full bg-gradient-to-br from-accent/40 to-primary/40 blur-2xl" />
+                <Sparkles className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-primary" />
               </div>
               
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl transform rotate-3 blur-sm" />
               <Card className="relative card-gradient border-0 p-8 shadow-glow">
                 <CardContent className="p-0">
                   <div className="text-center mb-6">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary-glow text-primary-foreground mb-4 shadow-md">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary-glow text-primary-foreground mb-4 shadow-md relative">
                       <Download className="h-8 w-8" />
+                      <div className="absolute -inset-2 bg-gradient-to-br from-primary/30 to-accent/30 rounded-full blur-lg -z-10 animate-pulse" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">共有リンクでの配布</h3>
                     <p className="text-muted-foreground">
@@ -397,13 +412,16 @@ export const Landing = () => {
         </div>
         
         <div className="container text-center relative">
-          {/* CTA Character */}
-          <div className="inline-block mb-6 animate-bounce-in">
-            <img 
-              src={characterCta} 
-              alt="ラクコラを始めよう" 
-              className="w-32 h-32 mx-auto drop-shadow-2xl"
-            />
+          {/* Decorative element */}
+          <div className="inline-block mb-6 animate-bounce-in relative">
+            <div className="w-32 h-32 mx-auto relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/40 to-accent/40 rounded-full blur-2xl animate-pulse" />
+              <div className="absolute inset-4 bg-gradient-to-br from-accent/60 to-primary/60 rounded-full flex items-center justify-center">
+                <Sparkles className="w-16 h-16 text-white" />
+              </div>
+              <Star className="absolute -top-2 -right-2 w-8 h-8 text-accent fill-accent animate-spin" style={{ animationDuration: '3s' }} />
+              <Star className="absolute -bottom-2 -left-2 w-6 h-6 text-primary fill-primary animate-spin" style={{ animationDuration: '4s' }} />
+            </div>
           </div>
           
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
