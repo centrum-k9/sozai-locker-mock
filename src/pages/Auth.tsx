@@ -6,11 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { Loader2, Mail, Lock, ArrowLeft, Twitter } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const Auth = () => {
   const [email, setEmail] = useState('');
@@ -18,7 +19,7 @@ export const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { login, isAuthenticated } = useAuth();
+  const { signIn, signUp, signInWithTwitter, isAuthenticated, isLoading: authLoading } = useAuth();
   const { trackPageView, trackClick } = useAnalytics();
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,22 +31,31 @@ export const Auth = () => {
   }, [trackPageView]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !authLoading) {
       navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate, from]);
+  }, [isAuthenticated, authLoading, navigate, from]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
     try {
-      await login(email, password);
-      trackClick('login-success', 'auth-form');
-      toast.success('ログインしました！');
-      navigate(from, { replace: true });
-    } catch (err) {
+      const { error } = await signIn(email, password);
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          setError('メールアドレスまたはパスワードが正しくありません。');
+        } else {
+          setError(error.message);
+        }
+        trackClick('login-error', 'auth-form');
+      } else {
+        trackClick('login-success', 'auth-form');
+        toast.success('ログインしました！');
+        navigate(from, { replace: true });
+      }
+    } catch (err: any) {
       setError('ログインに失敗しました。もう一度お試しください。');
       trackClick('login-error', 'auth-form');
     } finally {
@@ -53,22 +63,64 @@ export const Auth = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    trackClick('google-login', 'auth-form');
-    // Mock Google login - immediately succeed
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
     setIsLoading(true);
-    setTimeout(async () => {
-      try {
-        await login('demo@example.com', 'demo');
-        toast.success('Googleアカウントでログインしました！');
+
+    if (password.length < 6) {
+      setError('パスワードは6文字以上で入力してください。');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const { error } = await signUp(email, password);
+      if (error) {
+        if (error.message.includes('User already registered')) {
+          setError('このメールアドレスは既に登録されています。');
+        } else {
+          setError(error.message);
+        }
+        trackClick('signup-error', 'auth-form');
+      } else {
+        trackClick('signup-success', 'auth-form');
+        toast.success('アカウントを作成しました！');
         navigate(from, { replace: true });
-      } catch (err) {
-        setError('Googleログインに失敗しました。');
-      } finally {
-        setIsLoading(false);
       }
-    }, 1000);
+    } catch (err: any) {
+      setError('アカウント作成に失敗しました。もう一度お試しください。');
+      trackClick('signup-error', 'auth-form');
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const handleTwitterLogin = async () => {
+    trackClick('twitter-login', 'auth-form');
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      const { error } = await signInWithTwitter();
+      if (error) {
+        setError('Xログインに失敗しました。');
+        trackClick('twitter-login-error', 'auth-form');
+      }
+    } catch (err) {
+      setError('Xログインに失敗しました。');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/20 to-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-muted/20 to-background">
@@ -88,46 +140,29 @@ export const Auth = () => {
         <Card className="card-gradient border-0 shadow-lg">
           <CardHeader className="space-y-1 text-center">
             <div className="flex items-center justify-center mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-glow text-primary-foreground font-bold">
-                SL
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-glow text-primary-foreground font-bold text-lg">
+                ラク
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold">ラクコラにログイン</CardTitle>
+            <CardTitle className="text-2xl font-bold">ラクコラへようこそ</CardTitle>
             <CardDescription>
-              素材管理を始めるためにアカウントにログインしてください
+              コラボ配信の準備をもっとラクに
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Google Login */}
+            {/* X (Twitter) Login */}
             <Button
               variant="outline"
-              onClick={handleGoogleLogin}
+              onClick={handleTwitterLogin}
               disabled={isLoading}
-              className="w-full"
+              className="w-full bg-black hover:bg-black/90 text-white border-0"
             >
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
-                  <path
-                    fill="currentColor"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  />
-                </svg>
+                <Twitter className="mr-2 h-4 w-4" />
               )}
-              Googleでログイン
+              Xで続ける
             </Button>
 
             <div className="relative">
@@ -139,68 +174,127 @@ export const Auth = () => {
               </div>
             </div>
 
-            {/* Email Login Form */}
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">メールアドレス</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="your@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
+            <Tabs defaultValue="signin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="signin">ログイン</TabsTrigger>
+                <TabsTrigger value="signup">新規登録</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="signin" className="space-y-4 mt-4">
+                <form onSubmit={handleSignIn} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-email">メールアドレス</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="signin-email"
+                        type="email"
+                        placeholder="your@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">パスワード</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="パスワードを入力"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-password">パスワード</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="signin-password"
+                        type="password"
+                        placeholder="パスワードを入力"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
 
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
 
-              <Button
-                type="submit"
-                className="w-full hero-gradient hover:opacity-90 transition-opacity"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ログイン中...
-                  </>
-                ) : (
-                  'ログイン'
-                )}
-              </Button>
-            </form>
+                  <Button
+                    type="submit"
+                    className="w-full hero-gradient hover:opacity-90 transition-opacity"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ログイン中...
+                      </>
+                    ) : (
+                      'ログイン'
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
 
-            <div className="text-center text-sm text-muted-foreground">
-              <p>デモ用アカウント:</p>
-              <code className="bg-muted px-2 py-1 rounded text-xs">
-                任意のメール・パスワードでログイン可
-              </code>
-            </div>
+              <TabsContent value="signup" className="space-y-4 mt-4">
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email">メールアドレス</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder="your@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password">パスワード</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        placeholder="6文字以上"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-10"
+                        minLength={6}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  <Button
+                    type="submit"
+                    className="w-full hero-gradient hover:opacity-90 transition-opacity"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        登録中...
+                      </>
+                    ) : (
+                      '無料で始める'
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       </div>

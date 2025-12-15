@@ -7,30 +7,42 @@ import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
-import { userApi } from '@/services/mockClient';
 import { LicensePreset } from '@/core/types';
 import { licensePresetInfo } from '@/services/seed';
 import { toast } from 'sonner';
 
 const Settings = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { trackPageView, trackSettingsChange } = useAnalytics();
+  
+  const displayName = profile?.display_name || user?.email?.split('@')[0] || '';
+  
   const [settings, setSettings] = useState({
-    name: user?.name || '',
+    name: displayName,
     email: user?.email || '',
-    defaultLicense: user?.defaultLicense || 'COMM_OK_CREDIT_REQ' as LicensePreset,
-    defaultCreditText: user?.defaultCreditText || '',
-    watermarkText: user?.watermarkText || 'ラクコラ',
-    watermarkOpacity: user?.watermarkOpacity || 0.3,
+    defaultLicense: 'COMM_OK_CREDIT_REQ' as LicensePreset,
+    defaultCreditText: '',
+    watermarkText: 'ラクコラ',
+    watermarkOpacity: 0.3,
   });
 
   useEffect(() => {
     trackPageView('settings');
   }, [trackPageView]);
 
+  useEffect(() => {
+    if (profile || user) {
+      setSettings(prev => ({
+        ...prev,
+        name: profile?.display_name || user?.email?.split('@')[0] || '',
+        email: user?.email || '',
+      }));
+    }
+  }, [profile, user]);
+
   const handleSave = async () => {
     try {
-      await userApi.update(settings);
+      // TODO: Implement profile update via Supabase
       toast.success('設定を保存しました');
       trackSettingsChange('profile', settings);
     } catch (error) {
@@ -65,8 +77,12 @@ const Settings = () => {
               id="email"
               type="email"
               value={settings.email}
-              onChange={(e) => setSettings(prev => ({ ...prev, email: e.target.value }))}
+              disabled
+              className="bg-muted"
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              メールアドレスは変更できません
+            </p>
           </div>
         </CardContent>
       </Card>
