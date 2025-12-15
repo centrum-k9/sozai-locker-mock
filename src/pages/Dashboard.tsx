@@ -33,7 +33,7 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showUpload, setShowUpload] = useState(false);
 
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { trackPageView, trackClick } = useAnalytics();
   const [searchParams] = useSearchParams();
 
@@ -70,6 +70,8 @@ const Dashboard = () => {
 
     loadDashboardData();
   }, []);
+
+  const displayName = profile?.display_name || user?.email?.split('@')[0] || 'ユーザー';
 
   const statsCards = [
     {
@@ -125,7 +127,7 @@ const Dashboard = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold mb-2">
-            おかえりなさい、{user?.name}さん！
+            おかえりなさい、{displayName}さん！
           </h1>
           <p className="text-muted-foreground">
             今日も素晴らしい作品を作っていきましょう 🎨

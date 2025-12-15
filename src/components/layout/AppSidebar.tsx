@@ -37,7 +37,7 @@ const mainItems = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const currentPath = location.pathname;
 
@@ -65,6 +65,9 @@ export function AppSidebar() {
       ? "bg-primary/10 text-primary font-medium border-r-2 border-primary" 
       : "hover:bg-muted/50 text-muted-foreground hover:text-foreground";
 
+  const displayName = profile?.display_name || user?.email?.split('@')[0] || 'ユーザー';
+  const userName = profile?.twitter_handle || user?.email?.split('@')[0] || 'user';
+
   return (
     <Sidebar
       className={state === "collapsed" ? "w-14" : "w-64"}
@@ -76,14 +79,14 @@ export function AppSidebar() {
           <div className="p-4 border-b border-sidebar-border">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center text-primary-foreground font-semibold">
-                {user.displayName?.[0] || user.name[0]}
+                {displayName[0]}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-sidebar-foreground truncate">
-                  {user.displayName || user.name}
+                  {displayName}
                 </p>
                 <p className="text-xs text-sidebar-foreground/60 truncate">
-                  @{user.name}
+                  @{userName}
                 </p>
               </div>
             </div>

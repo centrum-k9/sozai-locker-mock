@@ -35,7 +35,7 @@ const MyProfile = () => {
   const [userStandingImage, setUserStandingImage] = useState<string | null>(null);
   const [userKeyVisual, setUserKeyVisual] = useState<string | null>(null);
 
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { trackPageView, trackClick } = useAnalytics();
 
   useEffect(() => {
@@ -95,8 +95,9 @@ const MyProfile = () => {
     );
   }
 
-  const mainAvatarAsset = myAssets.find(asset => asset.id === user.mainAvatar);
-  const keyVisualAsset = myAssets.find(asset => asset.id === user.keyVisual);
+  const displayName = profile?.display_name || user.email?.split('@')[0] || 'ユーザー';
+  const userName = profile?.twitter_handle || user.email?.split('@')[0] || 'user';
+  const avatarUrl = profile?.avatar_url || undefined;
 
   return (
     <div className="container py-8 space-y-8">
@@ -106,7 +107,7 @@ const MyProfile = () => {
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-shrink-0">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={user.avatar} alt={user.displayName} />
+                <AvatarImage src={avatarUrl} alt={displayName} />
                 <AvatarFallback>
                   <User className="h-12 w-12" />
                 </AvatarFallback>
@@ -117,9 +118,9 @@ const MyProfile = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-3xl font-bold">
-                    {user.displayName || user.name}
+                    {displayName}
                   </h1>
-                  <p className="text-muted-foreground">@{user.name}</p>
+                  <p className="text-muted-foreground">@{userName}</p>
                 </div>
                 <div className="flex gap-2">
                   <ShareMyPageButton />
@@ -132,34 +133,14 @@ const MyProfile = () => {
                 </div>
               </div>
 
-              {/* Social Links */}
-              {user.socialLinks && (
-                <div className="flex flex-wrap gap-2">
-                  {Object.entries(user.socialLinks).map(([platform, url]) => (
-                    <Button
-                      key={platform}
-                      variant="outline"
-                      size="sm"
-                      asChild
-                      className="hover:bg-primary/10"
-                    >
-                      <a href={url} target="_blank" rel="noopener noreferrer">
-                        {getSocialIcon(platform)}
-                        <span className="ml-2 capitalize">{platform}</span>
-                      </a>
-                    </Button>
-                  ))}
-                </div>
-              )}
-
-              {/* Usage Rules */}
-              {user.usageRules && (
+              {/* Bio */}
+              {profile?.bio && (
                 <div className="bg-muted/50 rounded-lg p-4">
                   <h3 className="font-semibold mb-2 flex items-center">
                     <Star className="h-4 w-4 mr-2" />
-                    素材利用ルール
+                    自己紹介
                   </h3>
-                  <p className="text-sm text-muted-foreground">{user.usageRules}</p>
+                  <p className="text-sm text-muted-foreground">{profile.bio}</p>
                 </div>
               )}
             </div>
@@ -179,23 +160,21 @@ const MyProfile = () => {
               </CardTitle>
               <CardDescription>プロフィールのメイン画像</CardDescription>
             </div>
-            {!mainAvatarAsset && (
-              <Button 
-                size="sm" 
-                variant="outline" 
-                onClick={() => setShowImageModal('standing')}
-              >
-                変更
-              </Button>
-            )}
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={() => setShowImageModal('standing')}
+            >
+              変更
+            </Button>
           </CardHeader>
           <CardContent>
-            {(mainAvatarAsset || userStandingImage) ? (
+            {userStandingImage ? (
               <div className="space-y-3">
                 <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden">
                   <img
-                    src={userStandingImage || mainAvatarAsset?.previewUrl}
-                    alt={mainAvatarAsset?.title || '立ち絵'}
+                    src={userStandingImage}
+                    alt="立ち絵"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -230,23 +209,21 @@ const MyProfile = () => {
               </CardTitle>
               <CardDescription>チャンネルやイベントのメイン画像</CardDescription>
             </div>
-            {!keyVisualAsset && (
-              <Button 
-                size="sm" 
-                variant="outline" 
-                onClick={() => setShowImageModal('keyVisual')}
-              >
-                変更
-              </Button>
-            )}
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={() => setShowImageModal('keyVisual')}
+            >
+              変更
+            </Button>
           </CardHeader>
           <CardContent>
-            {(keyVisualAsset || userKeyVisual) ? (
+            {userKeyVisual ? (
               <div className="space-y-3">
                 <div className="aspect-video bg-muted rounded-lg overflow-hidden">
                   <img
-                    src={userKeyVisual || keyVisualAsset?.previewUrl}
-                    alt={keyVisualAsset?.title || 'キービジュアル'}
+                    src={userKeyVisual}
+                    alt="キービジュアル"
                     className="w-full h-full object-cover"
                   />
                 </div>

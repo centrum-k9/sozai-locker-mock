@@ -28,14 +28,14 @@ import { useState } from 'react';
 import { ShareMyPageModal } from '@/components/modals/ShareMyPageModal';
 
 export const Header = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, profile, signOut, isAuthenticated } = useAuth();
   const { trackClick } = useAnalytics();
   const location = useLocation();
   const [showShareModal, setShowShareModal] = useState(false);
 
   const handleLogout = () => {
     trackClick('logout', 'header');
-    logout();
+    signOut();
   };
 
   const navigation = [
@@ -43,6 +43,9 @@ export const Header = () => {
     { name: '素材', href: '/assets', icon: FileImage },
     { name: 'コレクション', href: '/collections', icon: FolderOpen },
   ];
+
+  const displayName = profile?.display_name || user?.email?.split('@')[0] || 'ユーザー';
+  const avatarUrl = profile?.avatar_url || undefined;
 
   return (
     <>
@@ -134,9 +137,9 @@ export const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={user?.avatar} alt={user?.name} />
+                      <AvatarImage src={avatarUrl} alt={displayName} />
                       <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground">
-                        {user?.name?.charAt(0) || 'U'}
+                        {displayName.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -144,7 +147,7 @@ export const Header = () => {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <div className="flex items-center justify-start gap-2 p-2">
                     <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium">{user?.name}</p>
+                      <p className="font-medium">{displayName}</p>
                       <p className="text-xs text-muted-foreground">{user?.email}</p>
                     </div>
                   </div>

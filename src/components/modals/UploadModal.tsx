@@ -61,7 +61,7 @@ export const UploadModal = ({ open, onOpenChange, onUploadComplete }: UploadModa
     creditText: '',
   });
 
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { trackUploadStart, trackUploadComplete } = useAnalytics();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -113,6 +113,8 @@ export const UploadModal = ({ open, onOpenChange, onUploadComplete }: UploadModa
           setMetadata(prev => ({
             ...prev,
             title: newFiles[0].file.name.replace(/\.[^/.]+$/, ''),
+            description: '',
+            tags: '',
           }));
         }
       }
@@ -152,7 +154,7 @@ export const UploadModal = ({ open, onOpenChange, onUploadComplete }: UploadModa
         mime: currentFile.file.type,
         size: currentFile.file.size,
         licensePreset: metadata.licensePreset,
-        creditText: metadata.creditText || user?.defaultCreditText || undefined,
+        creditText: metadata.creditText || undefined,
         previewUrl: uploadResult.previewUrl,
         originalUrl: undefined, // Mock - not implemented yet
       };
@@ -386,7 +388,7 @@ export const UploadModal = ({ open, onOpenChange, onUploadComplete }: UploadModa
                       id="credit"
                       value={metadata.creditText}
                       onChange={(e) => setMetadata(prev => ({ ...prev, creditText: e.target.value }))}
-                      placeholder={user?.defaultCreditText || '@YourName'}
+                      placeholder="@YourName"
                     />
                   </div>
                 )}
