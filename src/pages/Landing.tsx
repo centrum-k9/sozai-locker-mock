@@ -112,14 +112,14 @@ export const Landing = () => {
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
-                <Link to="/s/main-character-pack">
+                <Link to="/demo">
                   <Button 
                     variant="outline" 
                     size="lg"
                     className="text-lg px-8 border-2"
                     onClick={() => trackClick('demo-link', 'hero')}
                   >
-                    どんな感じか見る
+                    デモを使ってみる
                   </Button>
                 </Link>
               </div>

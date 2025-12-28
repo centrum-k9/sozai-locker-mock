@@ -6,6 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { AppSidebar } from '@/components/layout/AppSidebar';
+import { DemoSidebar } from '@/components/layout/DemoSidebar';
 import { Header } from '@/components/layout/Header';
 import { BlankLayout } from '@/components/layout/BlankLayout';
 import { GlobalConfetti } from '@/features/collab/components/GlobalConfetti';
@@ -13,6 +14,9 @@ import { GlobalConfetti } from '@/features/collab/components/GlobalConfetti';
 // Public Pages
 import Landing from '@/pages/Landing';
 import PublicProfile from '@/pages/public/PublicProfile';
+
+// Demo Pages
+import DemoDashboard from '@/pages/demo/DemoDashboard';
 
 // Authenticated Pages
 import Auth from '@/pages/Auth';
@@ -36,10 +40,52 @@ import NotFound from '@/pages/NotFound';
 
 const queryClient = new QueryClient();
 
+// Demo Layout Component
+function DemoLayout() {
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <DemoSidebar />
+        
+        <div className="flex-1 flex flex-col">
+          <header className="h-14 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+            <div className="flex items-center px-4 w-full">
+              <SidebarTrigger className="mr-4" />
+              <div className="flex-1" />
+            </div>
+          </header>
+
+          <main className="flex-1 overflow-auto">
+            <Routes>
+              <Route path="/demo" element={<DemoDashboard />} />
+              <Route path="/demo/assets" element={<DemoDashboard />} />
+              <Route path="/demo/assets/:id" element={<DemoDashboard />} />
+              <Route path="/demo/collections" element={<DemoDashboard />} />
+              <Route path="/demo/collabs" element={<DemoDashboard />} />
+              <Route path="/demo/collabs/:id" element={<DemoDashboard />} />
+              <Route path="/demo/friends" element={<DemoDashboard />} />
+              <Route path="/demo/my-profile" element={<DemoDashboard />} />
+              <Route path="/demo/notifications" element={<DemoDashboard />} />
+              <Route path="/demo/settings" element={<DemoDashboard />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
+  );
+}
+
 // Layout wrapper component to handle authenticated vs public layouts
 function AppLayout() {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
+  
+  // Demo routes
+  const isDemoRoute = location.pathname.startsWith('/demo');
+  if (isDemoRoute) {
+    return <DemoLayout />;
+  }
   
   // Public routes that should not have sidebar
   const publicRoutes = ['/lp', '/profile/', '/s/', '/auth'];
@@ -60,7 +106,6 @@ function AppLayout() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/profile/:userId" element={<PublicProfile />} />
         <Route path="/s/:slug" element={<Share />} />
-        <Route path="/auth" element={<Auth />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     );
