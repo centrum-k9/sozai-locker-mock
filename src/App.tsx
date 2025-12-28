@@ -42,17 +42,22 @@ function AppLayout() {
   const location = useLocation();
   
   // Public routes that should not have sidebar
-  const publicRoutes = ['/lp', '/profile/', '/s/'];
+  const publicRoutes = ['/lp', '/profile/', '/s/', '/auth'];
   const isPublicRoute = publicRoutes.some(route => {
-    if (route === '/lp') return location.pathname === '/lp';
+    if (route === '/lp' || route === '/auth') return location.pathname === route;
     return location.pathname.startsWith(route);
   });
+
+  // Root path handling: show auth for unauthenticated, dashboard for authenticated
+  const isRootPath = location.pathname === '/';
   
-  // If it's a public route or user is not authenticated, use blank layout
-  if (isPublicRoute && !isAuthenticated) {
+  // If it's a public route and user is not authenticated, use blank layout
+  if ((isPublicRoute || isRootPath) && !isAuthenticated) {
     return (
       <Routes>
+        <Route path="/" element={<Auth />} />
         <Route path="/lp" element={<Landing />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/profile/:userId" element={<PublicProfile />} />
         <Route path="/s/:slug" element={<Share />} />
         <Route path="/auth" element={<Auth />} />
@@ -78,6 +83,7 @@ function AppLayout() {
           <main className="flex-1 overflow-auto">
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/lp" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/my-profile" element={<MyProfile />} />
