@@ -1,8 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 import { 
   ArrowRight,
   CheckCircle,
@@ -14,10 +21,16 @@ import {
   MessageSquare,
   Users,
   Monitor,
-  History
+  History,
+  FileText,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
+
+// Feature images
+import featureAssetSharing from '@/assets/feature-asset-sharing.png';
+import featureDescriptionCreator from '@/assets/feature-description-creator.png';
+import featureDiscordOverlay from '@/assets/feature-discord-overlay.png';
 
 export const Landing = () => {
   const { trackPageView, trackClick } = useAnalytics();
@@ -32,6 +45,27 @@ export const Landing = () => {
     '概要欄、前のコピペどこだっけ？',
     'OBSのオーバーレイ、また設定し直し',
     'コラボ相手の情報、探しに行くのが地味に面倒',
+  ];
+
+  const featureSlides = [
+    {
+      image: featureAssetSharing,
+      title: '素材共有',
+      description: '立ち絵やKVをURLで簡単共有',
+      icon: FileImage,
+    },
+    {
+      image: featureDescriptionCreator,
+      title: '概要欄作成',
+      description: 'コラボ情報から概要欄を自動生成',
+      icon: FileText,
+    },
+    {
+      image: featureDiscordOverlay,
+      title: 'Discordオーバーレイ',
+      description: '通話メンバーをOBSに表示',
+      icon: Monitor,
+    },
   ];
 
   const steps = [
@@ -125,57 +159,54 @@ export const Landing = () => {
               </div>
             </div>
             
-            {/* Right: Abstract UI mockup */}
+            {/* Right: Feature Carousel */}
             <div className="hidden lg:block">
-              <div className="relative p-8">
-                {/* Mock UI Cards */}
-                <div className="space-y-4">
-                  {/* Card 1 */}
-                  <div className="bg-card rounded-2xl p-5 shadow-md border border-border/50 transform hover:-translate-y-1 transition-transform">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                        <FileImage className="w-6 h-6 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="h-3 w-24 bg-muted rounded-full mb-2" />
-                        <div className="h-2 w-32 bg-muted/60 rounded-full" />
-                      </div>
-                      <CheckCircle className="w-6 h-6 text-primary" />
-                    </div>
-                  </div>
-                  
-                  {/* Card 2 */}
-                  <div className="bg-card rounded-2xl p-5 shadow-md border border-border/50 transform translate-x-8 hover:-translate-y-1 transition-transform">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
-                        <Link2 className="w-6 h-6 text-accent" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="h-2 w-40 bg-muted/80 rounded-full font-mono text-xs flex items-center">
-                          <span className="text-muted-foreground px-2">rakukora.app/share/...</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Card 3 */}
-                  <div className="bg-card rounded-2xl p-5 shadow-md border border-border/50 transform hover:-translate-y-1 transition-transform">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                        <Users className="w-6 h-6 text-primary" />
-                      </div>
-                      <div className="flex-1 flex gap-2">
-                        <div className="w-8 h-8 rounded-full bg-accent/30" />
-                        <div className="w-8 h-8 rounded-full bg-primary/30" />
-                        <div className="w-8 h-8 rounded-full bg-accent/40" />
-                      </div>
-                      <CheckCircle className="w-6 h-6 text-primary" />
-                    </div>
-                  </div>
-                </div>
+              <div className="relative">
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: true,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent>
+                    {featureSlides.map((slide, index) => {
+                      const Icon = slide.icon;
+                      return (
+                        <CarouselItem key={index}>
+                          <div className="p-1">
+                            <Card className="overflow-hidden border-border/50 shadow-lg">
+                              <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+                                <img
+                                  src={slide.image}
+                                  alt={slide.title}
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                              </div>
+                              <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center flex-shrink-0">
+                                    <Icon className="w-5 h-5 text-primary" />
+                                  </div>
+                                  <div>
+                                    <h3 className="font-bold text-lg">{slide.title}</h3>
+                                    <p className="text-sm text-muted-foreground">{slide.description}</p>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </CarouselItem>
+                      );
+                    })}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-2" />
+                  <CarouselNext className="right-2" />
+                </Carousel>
                 
                 {/* Floating badge */}
-                <div className="absolute -top-2 right-4 animate-float">
+                <div className="absolute -top-4 right-8 animate-float z-10">
                   <Badge className="bg-accent text-accent-foreground shadow-md">
                     <Star className="w-3 h-3 mr-1 fill-current" />
                     準備完了！
