@@ -42,9 +42,9 @@ function AppLayout() {
   const location = useLocation();
   
   // Public routes that should not have sidebar
-  const publicRoutes = ['/', '/profile/', '/s/'];
+  const publicRoutes = ['/lp', '/profile/', '/s/'];
   const isPublicRoute = publicRoutes.some(route => {
-    if (route === '/') return location.pathname === '/';
+    if (route === '/lp') return location.pathname === '/lp';
     return location.pathname.startsWith(route);
   });
   
@@ -52,7 +52,7 @@ function AppLayout() {
   if (isPublicRoute && !isAuthenticated) {
     return (
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/lp" element={<Landing />} />
         <Route path="/profile/:userId" element={<PublicProfile />} />
         <Route path="/s/:slug" element={<Share />} />
         <Route path="/auth" element={<Auth />} />
